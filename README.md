@@ -1,6 +1,6 @@
-# qb-drugsales
+# cad-drugsales
 
-- Configurable Sell Zone Radius / place / price
+- Configurable Sell Zones / Drugs / price
 - NPC Drug sales
 - Add as many drugs you want
 
