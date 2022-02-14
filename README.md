@@ -1,3 +1,5 @@
+## WIP (Not Tested)## 
+
 # cad-drugsales
 
 - Configurable Sell Zones / Drugs / price
@@ -5,4 +7,4 @@
 - Add as many drugs you want
 
 
-Note: Not Tested Yet, any issue please report on github or on discord: https://discord.gg/9tyjPkA6nd
+Note: Any issue please report on github or on discord: https://discord.gg/9tyjPkA6nd
