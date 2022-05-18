@@ -10,7 +10,7 @@
 - PolyZone
 
 # Preview
-[![Click Here](https://user-images.githubusercontent.com/72443203/169163591-d4956c2d-436d-4a42-8c75-71398fc2c273.png)(https://www.youtube.com/watch?v=0EmvAfaEDzE))
+[![Click Here](https://user-images.githubusercontent.com/72443203/169163591-d4956c2d-436d-4a42-8c75-71398fc2c273.png)](https://www.youtube.com/watch?v=0EmvAfaEDzE))
 
 # How to Use
 - Download latest release and add to resources
