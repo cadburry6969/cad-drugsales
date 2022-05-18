@@ -1,120 +1,138 @@
-local QBCore = exports['qb-core']:GetCoreObject()
-selling = false
+local QBCore = exports[Config.Core]:GetCoreObject()
 
-function IsInSellingZone()
-	local PlayerCoords = GetEntityCoords(PlayerPedId(), false)
-	for a=1, #Config.SellingDrugs, 1 do						
-		-- if #(vector3(Config.SellingDrugs[a].coords.x, Config.SellingDrugs[a].coords.y, Config.SellingDrugs[a].coords.z)-vector3(PlayerCoords.x, PlayerCoords.y, PlayerCoords.z)) < Config.SellingDrugs[a].radius then			
-		-- 	return true, Config.SellingDrugs[a].item, a				
-		if IsEntityInZone(PlayerPedId(), Config.SellingDrugs[a].zone) then
-			return true, Config.SellingDrugs[a].item, a	
-		else
-			return false, Config.SellingDrugs[a].item, a
+-- \ Locals and tables
+local SoldPeds = {}
+local SellZone = {}
+local isInZone = false
+local CurrentZone = nil
+
+-- \ Create Zones for the drug sales
+for k, v in pairs(Config.Zones) do
+    SellZone[k] = PolyZone:Create(v.points, {
+        name= 'sellzone'..k,
+        minZ = v.minZ,
+        maxZ = v.maxZ,
+        debugPoly = Config.Debug,
+    })
+end
+
+-- \ Check if inside sellzone
+CreateThread(function()
+	while true do
+		local Ped = PlayerPedId()
+		local coord = GetEntityCoords(Ped)
+		if Ped and coord and SellZone and next(SellZone) ~= nil then
+			for k, v in pairs(SellZone) do
+				if SellZone[k] then
+					if SellZone[k]:isPointInside(coord) then
+						isInZone = true	
+                        CurrentZone = SellZone[k]	
+						if Config.Debug then print(json.encode(CurrentZone)) end
+					end
+				end
+			end
 		end
+		Wait(1000)
 	end
+end)
+
+-- \ Send police alert on drug sale
+function PoliceAlert()
+    -- Add Your alert system here
+	if Config.Debug then print('Police Notify Function triggered') end
 end
 
-function GetPedInFront()
-	local player = PlayerId()
-	local plyPed = GetPlayerPed(player)
-	local plyPos = GetEntityCoords(plyPed, false)
-	local plyOffset = GetOffsetFromEntityInWorldCoords(plyPed, 0.0, 1.3, 0.0)
-	local rayHandle = StartShapeTestCapsule(plyPos.x, plyPos.y, plyPos.z, plyOffset.x, plyOffset.y, plyOffset.z, 1.0, 12, plyPed, 7)
-	local _, _, _, _, ped = GetShapeTestResult(rayHandle)
-	return ped
+-- \ Play five animation for both player and ped
+local function PlayGiveAnim(tped)
+	local pid = PlayerPedId()	
+	FreezeEntityPosition(pid, true)		
+	RequestAnimDict("mp_common")		
+	TaskPlayAnim(pid, "mp_common", "givetake2_a", 8.0, -8, -1, 0, 0, 0, 0, 0)    
+	TaskPlayAnim(tped, "mp_common", "givetake2_a", 8.0, -8, -1, 0, 0, 0, 0, 0)    	
+	Wait(2000)
+	FreezeEntityPosition(pid, false)	
+	StopAnimTask(pid, "mp_common", "givetake2_a", 1.0)
+	StopAnimTask(tped, "mp_common", "givetake2_a", 1.0)
 end
 
-function InteractPed(issell, drug, drugid)
-	Playerjob = QBCore.Functions.GetPlayerData().job	
-	oldped = ped	
+-- \ Add Old Ped to table
+local function AddSoldPed(entity)
+    SoldPeds[entity] = true
+end
+
+--\ Check if ped is in table
+local function HasSoldPed(entity)
+    return SoldPeds[entity] ~= nil
+end
+
+-- \ Interact with the ped
+local function InteractPed(ped)
+	local Playerjob = QBCore.Functions.GetPlayerData().job	
+	local ZoneDrug = Config.ZoneDrugs[CurrentZone.name]	
 	SetEntityAsMissionEntity(ped)	
 	local px,py,pz=table.unpack(GetGameplayCamCoords())
 	TaskTurnPedToFaceCoord(ped, px, py, pz, 10000)
 	Wait(1000)	
 	if Playerjob.name == 'police' then
-		TriggerEvent('QBCore:Notify', 'The buyer has seen you before, they know you\'re a cop!')
-		SetPedAsNoLongerNeeded(oldped)
-		selling = false
+		TriggerEvent('QBCore:Notify', 'Locals hate cops!')
+		SetPedAsNoLongerNeeded(ped)		
+		if Config.Debug then print('Police Not allowed') end
 		return
 	end
-
-	if ped ~= oldped then
-		TriggerEvent('QBCore:Notify', 'You acted sketchy (moved far away) and the buyer was no longer interested.')
-		SetPedAsNoLongerNeeded(oldped)
-		selling = false
-		return
-	end
-
 	local percent = math.random(1, 100)
-
-	if percent < 30 then
-		TriggerEvent('QBCore:Notify', 'The buyer was not interested.')
-	elseif percent < 70 then
-		TriggerEvent("cad-drugsales:anim")
+	if percent < Config.ChanceSell then
+		PlayGiveAnim(ped)
 		Wait(1500)
 		QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
-			if result and issell then				
-				TriggerServerEvent('cad-drugsales:server:startdeal', drug, 1, drugid)
+			if result then				
+				TriggerServerEvent('cad-drugsales:initiatedrug', ZoneDrug)
 			else
-				TriggerEvent('QBCore:Notify', 'You have nothing to sell.')
+				TriggerEvent('cad-drugsales:notify', 'You have nothing to sell.')
 			end			
-		end, drug)
+		end, ZoneDrug.item)		
 	else
-		TriggerEvent('QBCore:Notify', 'The buyer is calling the police!')
-		TaskUseMobilePhoneTimed(ped, 5000)
-		local playerCoords = GetEntityCoords(PlayerPedId())
-		-- Add your police notify alert here
+		if Config.Debug then print('Police has been notified') end
+		TriggerEvent('cad-drugsales:notify', 'The buyer is calling the police!')
+		TaskUseMobilePhoneTimed(ped, 8000)		
+		PoliceAlert()
 	end
-	
-	selling = false
-	SetPedAsNoLongerNeeded(oldped)
+	SetPedAsNoLongerNeeded(ped)
 end
 
-CreateThread(function()
-	while true do
-		Wait(4)
-		local inRange = false		
-		if ped ~= 0 then 
-			local cansell, drugname, drugid = IsInSellingZone()						
-			if not IsPedDeadOrDying(ped) and not IsPedInAnyVehicle(ped) and cansell then
-				inRange = true
-                local pedType = GetPedType(ped)
-				if ped ~= oldped and not selling and (IsPedAPlayer(ped) == false and pedType ~= 28) then
-					local pos = GetEntityCoords(ped)
-					QBCore.Functions.DrawText3D(pos.x, pos.y, pos.z, 'Press ~g~E~w~ to sell drugs')
-					if IsControlJustPressed(0, 38) and not selling then						
-						selling = true
-						InteractPed(cansell, drugname, drugid)
-					end
-				end			
-			end		
-		end
-		if not inRange then
-			Wait(1000)
-		end
-	end
+-- \ Initialize the drug sales
+local function InitiateSales(entity)
+	local CurrentPedID = PedToNet(entity)			
+	local isSoldtoPed = HasSoldPed(CurrentPedID)
+	if isSoldtoPed then TriggerEvent('cad-drugsales:notify', 'You already spoke with this local') return false end
+	AddSoldPed(CurrentPedID)
+	InteractPed(entity)
+	if Config.Debug then print('Drug Sales Initiated not proceding to interact') end
+end
+
+-- \ Notify event for client/server
+RegisterNetEvent('cad-drugsales:notify', function(msg)
+	if Config.Debug then print('Notify:'..msg) end
+	TriggerEvent('QBCore:Notify', msg, "primary", 5000)
 end)
 
+-- \ Sell Drugs to peds inside the sellzone
 CreateThread(function()
-	while true do
-		Wait(1000)
-		local playerPed = PlayerPedId()
-		if not IsPedInAnyVehicle(playerPed) or not IsPedDeadOrDying(playerPed) then
-			ped = GetPedInFront()
-		else
-			Wait(500)
-		end
-    end
-end)
-
-RegisterNetEvent('cad-drugsales:anim', function()
-	local pid = PlayerPedId()	
-	FreezeEntityPosition(pid, true)		
-	RequestAnimDict("mp_common")		
-	TaskPlayAnim(pid, "mp_common", "givetake2_a", 8.0, -8, -1, 0, 0, 0, 0, 0)    
-	TaskPlayAnim(ped, "mp_common", "givetake2_a", 8.0, -8, -1, 0, 0, 0, 0, 0)    	
-	Wait(2000)
-	FreezeEntityPosition(pid, false)	
-	StopAnimTask(pid, "mp_common", "givetake2_a", 1.0)
-	StopAnimTask(ped, "mp_common", "givetake2_a", 1.0)
+	exports[Config.Target]:AddGlobalPed({
+		options = {
+		{                			
+			icon = 'fas fa-comments',
+			label = 'Talk',
+			action = function(entity)
+				InitiateSales(entity)
+			end,
+			canInteract = function(entity)
+				if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and isInZone then 								
+					return true
+				end          
+				return false
+			end,        
+		}
+		},
+		distance = 2.5,
+	})
 end)

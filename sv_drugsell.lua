@@ -1,14 +1,14 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports[Config.Core]:GetCoreObject()
 
-RegisterServerEvent('cad-drugsales:server:startdeal')
-AddEventHandler('cad-drugsales:server:startdeal', function(drugname, amount, drugid)	
-	local xPlayer = QBCore.Functions.GetPlayer(source)
-	if xPlayer ~= nil then		
-		local price = Config.SellingDrugs[drugid].price		
-		TriggerClientEvent('QBCore:Notify', source, 'You got $'..price)
-		xPlayer.Functions.RemoveItem(drugname, amount)
-       		TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items[drugname], "remove")
-		Citizen.Wait(1500)		
-		xPlayer.Functions.AddMoney("cash", price)
+RegisterNetEvent('cad-drugsales:initiatedrug', function(ZoneDrug)	
+	local Player = QBCore.Functions.GetPlayer(source)
+	if Player then		
+		local price = ZoneDrug.price				
+		Player.Functions.RemoveItem(ZoneDrug.item, 1)
+       	TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items[ZoneDrug.item], "remove", 1)		
+		Wait(500) -- Just to make sure the item is removed and them money is provided to the player		
+		Player.Functions.AddMoney("cash", price)
+		TriggerClientEvent('cad-drugsales:notify', source, 'You recieved $'..price)
+		if Config.Debug then print('You got 1 '..ZoneDrug.item..' for $'..price) end
 	end
 end)

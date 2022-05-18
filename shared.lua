@@ -1,12 +1,28 @@
 
 Config = {}
-
-Config.SellingDrugs = {
-    [1] = {zone = "STAD", item = "crack_baggy", price = math.random(150, 200)}, -- coords = {x = 41.4,  y = -1843.56,  z = 23.68}, radius = 300,
-    [2] = {zone = "BEACH", item = "cokebaggy", price = math.random(200, 300)}, -- coords = {x = -1258.16,  y = -1459.64,  z = 4.28}, radius = 200,
-    [3] = {zone = "VINE", item = "meth", price = math.random(300, 400)}, -- coords = {x= 307.67, y= 222.21, z= 104.38}, radius = 200, 
+Config.Debug = true -- \ Set to true to enable debugging
+Config.Core = "qb-core" -- \ The name of the core (Default: qb-core)
+Config.Target = "qb-target" -- \ The target name (Default: qb-target)
+Config.ChanceSell = 70 -- \ Chance to sell drug (in %)
+Config.Zones = { -- \ Sell zones (these zones are linked with the certain drugs check below)
+    ['groove'] = {        
+		points = {
+            vector2(250.90760803223, -1866.3974609375),
+            vector2(146.70475769043, -1990.5447998047),
+            vector2(130.3134765625, -2034.3944091797),
+            vector2(95.291275024414, -2030.4129638672),
+            vector2(88.095336914062, -2009.6634521484),
+            vector2(68.878730773926, -1978.8924560547),
+            vector2(-153.59761047363, -1779.4030761719),
+            vector2(-97.692588806152, -1750.6363525391),
+            vector2(-50.927833557129, -1733.6020507812),
+            vector2(49.590217590332, -1689.9705810547)
+        },
+        minZ = 18.035144805908,
+        maxZ = 75.059997558594,                      
+    },
 }
 
--------------
--- ZONE LIST: https://docs.fivem.net/natives/?_0xCD90657D4C30E1CA
--------------
+Config.ZoneDrugs = { -- \ Names should be same as zone names
+    ['sellzonegroove'] = {item = 'meth', price = math.random(100, 200)},
+}
