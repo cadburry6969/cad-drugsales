@@ -28,6 +28,8 @@ CreateThread(function()
 						isInZone = true	
                         CurrentZone = SellZone[k]	
 						if Config.Debug then print(json.encode(CurrentZone)) end
+					else
+						isInZone = false
 					end
 				end
 			end
@@ -65,10 +67,28 @@ local function HasSoldPed(entity)
     return SoldPeds[entity] ~= nil
 end
 
+local function InitiateSell()
+	local AlreadySold = false
+	for k, v in pairs(Config.ZoneDrugs) do			
+		if v.zone == CurrentZone.name then
+			Wait(200) -- Dont Change this									
+			if not AlreadySold then
+				QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
+					if result then		
+						AlreadySold = true							
+						TriggerServerEvent('cad-drugsales:initiatedrug', v)														
+					else
+						if Config.Debug then print('You dont have ['..v.item..'] to sell') end
+					end			
+				end, v.item)
+			end
+		end
+	end
+end
+
 -- \ Interact with the ped
 local function InteractPed(ped)
-	local Playerjob = QBCore.Functions.GetPlayerData().job	
-	local ZoneDrug = Config.ZoneDrugs[CurrentZone.name]	
+	local Playerjob = QBCore.Functions.GetPlayerData().job				
 	SetEntityAsMissionEntity(ped)	
 	local px,py,pz=table.unpack(GetGameplayCamCoords())
 	TaskTurnPedToFaceCoord(ped, px, py, pz, 10000)
@@ -78,18 +98,12 @@ local function InteractPed(ped)
 		SetPedAsNoLongerNeeded(ped)		
 		if Config.Debug then print('Police Not allowed') end
 		return
-	end
+	end	
 	local percent = math.random(1, 100)
 	if percent < Config.ChanceSell then
 		PlayGiveAnim(ped)
-		Wait(1500)
-		QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
-			if result then				
-				TriggerServerEvent('cad-drugsales:initiatedrug', ZoneDrug)
-			else
-				TriggerEvent('cad-drugsales:notify', 'You have nothing to sell.')
-			end			
-		end, ZoneDrug.item)		
+		Wait(200) -- Dont Change this
+		InitiateSell()
 	else
 		if Config.Debug then print('Police has been notified') end
 		TriggerEvent('cad-drugsales:notify', 'The buyer is calling the police!')
@@ -106,7 +120,7 @@ local function InitiateSales(entity)
 	if isSoldtoPed then TriggerEvent('cad-drugsales:notify', 'You already spoke with this local') return false end
 	AddSoldPed(CurrentPedID)
 	InteractPed(entity)
-	if Config.Debug then print('Drug Sales Initiated not proceding to interact') end
+	if Config.Debug then print('Drug Sales Initiated now proceding to interact') end
 end
 
 -- \ Notify event for client/server

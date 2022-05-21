@@ -24,5 +24,6 @@ Config.Zones = { -- \ Sell zones (these zones are linked with the certain drugs 
 }
 
 Config.ZoneDrugs = { -- \ Names should be same as zone names
-    ['sellzonegroove'] = {item = 'meth', price = math.random(100, 200)},
+    [1] = {zone="sellzonegroove", item = 'cokebaggy', price = math.random(100, 200)},
+    [2] = {zone="sellzonegroove", item = 'meth', price = math.random(100, 200)},    
 }
