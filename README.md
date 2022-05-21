@@ -3,6 +3,7 @@
 - NPC Drug sales with target
 - Add as many drugs/zones you want 
 - Each zone has its own drug and price
+- You can add multiple drugs to a zone (check config instructions)
 
 # Dependencies
 - qb-core
@@ -15,12 +16,12 @@
 # How to Use
 - Download latest release and add to resources
 - ensure in `server.cfg`
-- Change `shared.lua` to your likings
+- Change `shared.lua` to your likings (check config instructions)
 - Finish!
 
 # Config Instructions
 - For the zone to get linked with the drug you need to do as in image
-![image](https://user-images.githubusercontent.com/72443203/169163240-b4ec305b-a26a-4ca6-8cc4-5e85feba7c1c.png)
+![image](https://user-images.githubusercontent.com/72443203/169639948-e2ae2ab4-0ae1-42fc-901a-868ab935c723.png)
 
 
 Note: Any issue please report on github or discord: https://discord.gg/9tyjPkA6nd
