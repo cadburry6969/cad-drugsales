@@ -3,7 +3,6 @@ local QBCore = exports[Config.Core]:GetCoreObject()
 -- \ Locals and tables
 local SoldPeds = {}
 local SellZone = {}
-local isInZone = false
 local CurrentZone = nil
 
 -- \ Create Zones for the drug sales
@@ -25,11 +24,11 @@ CreateThread(function()
 			for k, v in pairs(SellZone) do
 				if SellZone[k] then
 					if SellZone[k]:isPointInside(coord) then
-						isInZone = true	
+						SellZone[k].inside = true	
                         CurrentZone = SellZone[k]	
 						if Config.Debug then print(json.encode(CurrentZone)) end
 					else
-						isInZone = false
+						SellZone[k].inside = false
 					end
 				end
 			end
@@ -88,7 +87,7 @@ end
 
 -- \ Interact with the ped
 local function InteractPed(ped)
-	local Playerjob = QBCore.Functions.GetPlayerData().job				
+	local Playerjob = QBCore.Functions.GetPlayerData().job		
 	SetEntityAsMissionEntity(ped)	
 	local px,py,pz=table.unpack(GetGameplayCamCoords())
 	TaskTurnPedToFaceCoord(ped, px, py, pz, 10000)
@@ -140,7 +139,7 @@ CreateThread(function()
 				InitiateSales(entity)
 			end,
 			canInteract = function(entity)
-				if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and isInZone then 								
+				if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside then 								
 					return true
 				end          
 				return false
