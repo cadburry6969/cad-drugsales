@@ -138,8 +138,8 @@ CreateThread(function()
 			action = function(entity)
 				InitiateSales(entity)
 			end,
-			canInteract = function(entity)
-				if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside then 								
+			canInteract = function(entity)				
+				if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) then 								
 					return true
 				end          
 				return false
