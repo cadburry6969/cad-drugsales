@@ -4,6 +4,7 @@ local QBCore = exports[Config.Core]:GetCoreObject()
 local SoldPeds = {}
 local SellZone = {}
 local CurrentZone = nil
+local AllowedTarget = true
 
 -- \ Create Zones for the drug sales
 for k, v in pairs(Config.Zones) do
@@ -15,31 +16,9 @@ for k, v in pairs(Config.Zones) do
     })
 end
 
--- \ Check if inside sellzone
-CreateThread(function()
-	while true do
-		local Ped = PlayerPedId()
-		local coord = GetEntityCoords(Ped)
-		if Ped and coord and SellZone and next(SellZone) ~= nil then
-			for k, v in pairs(SellZone) do
-				if SellZone[k] then
-					if SellZone[k]:isPointInside(coord) then
-						SellZone[k].inside = true	
-                        CurrentZone = SellZone[k]	
-						if Config.Debug then print(json.encode(CurrentZone)) end
-					else
-						SellZone[k].inside = false
-					end
-				end
-			end
-		end
-		Wait(1000)
-	end
-end)
-
 -- \ Send police alert on drug sale
-function PoliceAlert()
-    -- Add Your alert system here
+local function PoliceAlert()
+    -- Add Your alert system here	
 	if Config.Debug then print('Police Notify Function triggered') end
 end
 
@@ -87,7 +66,7 @@ end
 
 -- \ Interact with the ped
 local function InteractPed(ped)
-	local Playerjob = QBCore.Functions.GetPlayerData().job		
+	local Playerjob = QBCore.Functions.GetPlayerData().job				
 	SetEntityAsMissionEntity(ped)	
 	local px,py,pz=table.unpack(GetGameplayCamCoords())
 	TaskTurnPedToFaceCoord(ped, px, py, pz, 10000)
@@ -122,30 +101,75 @@ local function InitiateSales(entity)
 	if Config.Debug then print('Drug Sales Initiated now proceding to interact') end
 end
 
+-- \ Sell Drugs to peds inside the sellzone
+local function CreateTarget()
+	exports[Config.Target]:AddGlobalPed({
+		options = {
+			{                			
+				icon = 'fas fa-comments',
+				label = 'Talk',
+				action = function(entity)
+					InitiateSales(entity)
+				end,
+				canInteract = function(entity)
+					if CurrentZone then
+						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) then 								
+							return true
+						end         						
+					end					 
+					return false
+				end,        
+			}
+		},
+		distance = 2.5,
+	})
+end
+
+-- \ Remove Sell Drugs to peds inside the sellzone
+local function RemoveTarget()
+	exports['qb-target']:RemoveGlobalPed({"Talk"})
+end
+
+-- \ This will toggle allowing/disallowing target even if inside zone
+local function AllowedTarget()
+	AllowedTarget = not AllowedTarget
+end
+exports('AllowedTarget', AllowedTarget)
+
 -- \ Notify event for client/server
 RegisterNetEvent('cad-drugsales:notify', function(msg)
 	if Config.Debug then print('Notify:'..msg) end
 	TriggerEvent('QBCore:Notify', msg, "primary", 5000)
 end)
 
--- \ Sell Drugs to peds inside the sellzone
+-- \ Check if inside sellzone
 CreateThread(function()
-	exports[Config.Target]:AddGlobalPed({
-		options = {
-		{                			
-			icon = 'fas fa-comments',
-			label = 'Talk',
-			action = function(entity)
-				InitiateSales(entity)
-			end,
-			canInteract = function(entity)				
-				if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) then 								
-					return true
-				end          
-				return false
-			end,        
-		}
-		},
-		distance = 2.5,
-	})
+	while true do
+		local Ped = PlayerPedId()
+		local coord = GetEntityCoords(Ped)
+		if Ped and coord and SellZone and next(SellZone) ~= nil then
+			for k, v in pairs(SellZone) do
+				if SellZone[k] then
+					if SellZone[k]:isPointInside(coord) then						
+						SellZone[k].inside = true
+                        CurrentZone = SellZone[k]	
+						if not SellZone[k].target and AllowedTarget then
+							SellZone[k].target = true
+							CreateTarget()							
+							if Config.Debug then print("Target Added ["..CurrentZone.name.."]") end
+						end
+						if Config.Debug then print(json.encode(CurrentZone)) end
+					else										
+						SellZone[k].inside = false
+						if SellZone[k].target then
+							SellZone[k].target = false
+							RemoveTarget()
+							if Config.Debug then print("Target Removed ["..CurrentZone.name.."]") end
+						end
+					end
+				end
+			end
+		end
+		Wait(1000)
+	end
 end)
