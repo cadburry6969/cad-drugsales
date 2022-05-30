@@ -113,7 +113,7 @@ local function CreateTarget()
 				end,
 				canInteract = function(entity)
 					if CurrentZone then
-						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) then 								
+						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) then 								
 							return true
 						end         						
 					end					 
