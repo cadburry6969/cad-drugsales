@@ -101,6 +101,17 @@ local function InitiateSales(entity)
 	if Config.Debug then print('Drug Sales Initiated now proceding to interact') end
 end
 
+-- \ Blacklist Ped Models
+function isPedBlacklisted(ped)
+	local model = GetEntityModel(ped)
+	for i = 1, #Config.BlacklistPeds do
+		if model == GetHashKey(Config.BlacklistPeds[i]) then
+			return true
+		end
+	end
+	return false
+end
+
 -- \ Sell Drugs to peds inside the sellzone
 local function CreateTarget()
 	exports[Config.Target]:AddGlobalPed({
@@ -113,7 +124,7 @@ local function CreateTarget()
 				end,
 				canInteract = function(entity)
 					if CurrentZone then
-						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) then 								
+						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) then 								
 							return true
 						end         						
 					end					 

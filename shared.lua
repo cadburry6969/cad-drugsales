@@ -27,3 +27,8 @@ Config.ZoneDrugs = { -- \ Names should be same as zone names
     [1] = {zone="sellzonegroove", item = 'cokebaggy', price = math.random(100, 200)},
     [2] = {zone="sellzonegroove", item = 'meth', price = math.random(100, 200)},    
 }
+
+Config.BlacklistPeds = { -- \ Ped models that should be blacklisted
+    "mp_m_shopkeep_01",
+    "s_m_y_ammucity_01"
+}
