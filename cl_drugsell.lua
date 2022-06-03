@@ -93,12 +93,19 @@ end
 
 -- \ Initialize the drug sales
 local function InitiateSales(entity)
-	local CurrentPedID = PedToNet(entity)			
-	local isSoldtoPed = HasSoldPed(CurrentPedID)
-	if isSoldtoPed then TriggerEvent('cad-drugsales:notify', 'You already spoke with this local') return false end
-	AddSoldPed(CurrentPedID)
-	InteractPed(entity)
-	if Config.Debug then print('Drug Sales Initiated now proceding to interact') end
+	QBCore.Functions.TriggerCallback('cad-drugsales:server:GetCops', function(result)
+		if result < Config.MinimumCops then
+			TriggerEvent('cad-drugsales:notify', 'Buyer is not interested to buy now!')		
+			if Config.Debug then print('Not Enough Cops') end	
+		else
+			local CurrentPedID = PedToNet(entity)			
+			local isSoldtoPed = HasSoldPed(CurrentPedID)
+			if isSoldtoPed then TriggerEvent('cad-drugsales:notify', 'You already spoke with this local') return false end
+			AddSoldPed(CurrentPedID)
+			InteractPed(entity)
+			if Config.Debug then print('Drug Sales Initiated now proceding to interact') end
+		end
+	end)
 end
 
 -- \ Blacklist Ped Models
