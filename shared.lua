@@ -1,6 +1,6 @@
 
 Config = {}
-Config.Debug = true -- \ Set to true to enable debugging
+Config.Debug = false -- \ Set to true to enable debugging
 Config.Core = "qb-core" -- \ The name of the core (Default: qb-core)
 Config.Target = "qb-target" -- \ The target name (Default: qb-target)
 Config.MinimumCops = 0 -- \ Minimum cops required to sell drugs
