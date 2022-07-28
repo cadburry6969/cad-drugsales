@@ -18,7 +18,8 @@ end
 
 -- \ Send police alert on drug sale
 local function PoliceAlert()
-    -- Add Your alert system here	
+    -- Add Your alert system here
+	-- TriggerServerEvent('police:server:policeAlert', 'Drug sale in progress')
 	if Config.Debug then print('Police Notify Function triggered') end
 end
 
@@ -45,23 +46,22 @@ local function HasSoldPed(entity)
     return SoldPeds[entity] ~= nil
 end
 
-local function InitiateSell()
+local function InitiateSell(ped)
 	local AlreadySold = false
 	for k, v in pairs(Config.ZoneDrugs) do			
 		if v.zone == CurrentZone.name then
 			Wait(200) -- Dont Change this									
 			if not AlreadySold then
-				QBCore.Functions.TriggerCallback('QBCore:HasItem', function(result)
-					if result then		
-						AlreadySold = true							
-						TriggerServerEvent('cad-drugsales:initiatedrug', v)														
-					else
-						if Config.Debug then print('You dont have ['..v.item..'] to sell') end
-					end			
-				end, v.item)
+				if QBCore.Functions.HasItem(v.item, 1) then
+					PlayGiveAnim(ped)
+					AlreadySold = true
+					TriggerServerEvent('cad-drugsales:initiatedrug', v)
+				else
+					if Config.Debug then print('You dont have ['..v.item..'] to sell') end
+				end
 			end
 		end
-	end
+	end	
 end
 
 -- \ Interact with the ped
@@ -76,12 +76,10 @@ local function InteractPed(ped)
 		SetPedAsNoLongerNeeded(ped)		
 		if Config.Debug then print('Police Not allowed') end
 		return
-	end	
+	end		
 	local percent = math.random(1, 100)
-	if percent < Config.ChanceSell then
-		PlayGiveAnim(ped)
-		Wait(200) -- Dont Change this
-		InitiateSell()
+	if percent < Config.ChanceSell then		
+		InitiateSell(ped)
 	else
 		if Config.Debug then print('Police has been notified') end
 		TriggerEvent('cad-drugsales:notify', 'The buyer is calling the police!')
@@ -95,8 +93,8 @@ end
 local function InitiateSales(entity)
 	QBCore.Functions.TriggerCallback('cad-drugsales:server:GetCops', function(result)
 		if result < Config.MinimumCops then
-			TriggerEvent('cad-drugsales:notify', 'Buyer is not interested to buy now!')		
-			if Config.Debug then print('Not Enough Cops') end	
+			TriggerEvent('cad-drugsales:notify', 'Buyer is not interested to buy now!')			
+			if Config.Debug then print('Not Enough Cops') end
 		else
 			local CurrentPedID = PedToNet(entity)			
 			local isSoldtoPed = HasSoldPed(CurrentPedID)
@@ -105,7 +103,7 @@ local function InitiateSales(entity)
 			InteractPed(entity)
 			if Config.Debug then print('Drug Sales Initiated now proceding to interact') end
 		end
-	end)
+	end)	
 end
 
 -- \ Blacklist Ped Models
@@ -131,7 +129,7 @@ local function CreateTarget()
 				end,
 				canInteract = function(entity)
 					if CurrentZone then
-						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) then 								
+						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(PlayerPedId()) then								
 							return true
 						end         						
 					end					 
@@ -142,15 +140,17 @@ local function CreateTarget()
 		distance = 2.5,
 	})
 end
+exports('CreateTarget', CreateTarget)
 
 -- \ Remove Sell Drugs to peds inside the sellzone
 local function RemoveTarget()
 	exports['qb-target']:RemoveGlobalPed({"Talk"})
 end
+exports('RemoveTarget', RemoveTarget)
 
 -- \ This will toggle allowing/disallowing target even if inside zone
-local function AllowedTarget()
-	AllowedTarget = not AllowedTarget
+local function AllowedTarget(value)
+	AllowedTarget = value
 end
 exports('AllowedTarget', AllowedTarget)
 
