@@ -5,6 +5,7 @@
 - Add as many drugs/zones you want
 - Each zone has its own drug and price
 - You can add multiple drugs to a zone (check config instructions)
+- You can sell multiple drugs at once (upon random range) (check config)
 - exports to toggle target on ped (this will toggle allowing/disallowing target even if inside zone)
 - `exports["cad-drugsales"]:AllowedTarget(bool) --[true/false]`
 
