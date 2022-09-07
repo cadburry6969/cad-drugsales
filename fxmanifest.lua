@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Cadburry#7547'
 description 'Drug Sales with PolyZone and Target'
-version '2.0.7'
+version '2.0.8'
 
 shared_scripts {
     'shared.lua',
@@ -25,7 +25,8 @@ client_scripts {
 dependencies {
     'qb-core',
     'PolyZone',
-    'qb-target'    
+    'qb-target',
+    'qb-menu'
 }
 
 lua54 'yes'

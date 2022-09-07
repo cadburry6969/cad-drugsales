@@ -5,6 +5,7 @@ local SoldPeds = {}
 local SellZone = {}
 local CurrentZone = nil
 local AllowedTarget = true
+local isSold = false
 
 -- \ Create Zones for the drug sales
 for k, v in pairs(Config.Zones) do
@@ -24,16 +25,13 @@ local function PoliceAlert()
 end
 
 -- \ Play five animation for both player and ped
-local function PlayGiveAnim(tped)
+local function PlayGiveAnim(tped)	
 	local pid = PlayerPedId()	
 	FreezeEntityPosition(pid, true)		
-	RequestAnimDict("mp_common")		
-	TaskPlayAnim(pid, "mp_common", "givetake2_a", 8.0, -8, -1, 0, 0, 0, 0, 0)    
-	TaskPlayAnim(tped, "mp_common", "givetake2_a", 8.0, -8, -1, 0, 0, 0, 0, 0)    	
-	Wait(2000)
+	QBCore.Functions.RequestAnimDict('mp_common')
+	TaskPlayAnim(pid, "mp_common", "givetake2_a", 8.0, -8, 2000, 0, 1, 0,0,0)    
+	TaskPlayAnim(tped, "mp_common", "givetake2_a", 8.0, -8, 2000, 0, 1, 0,0,0)
 	FreezeEntityPosition(pid, false)	
-	StopAnimTask(pid, "mp_common", "givetake2_a", 1.0)
-	StopAnimTask(tped, "mp_common", "givetake2_a", 1.0)
 end
 
 -- \ Add Old Ped to table
@@ -46,16 +44,51 @@ local function HasSoldPed(entity)
     return SoldPeds[entity] ~= nil
 end
 
-local function InitiateSell(ped)
+local function TimeoutMenu(ped)
+	SetTimeout(Config.SellTimeout*1000, function()
+		if not isSold then
+			TriggerEvent("cad-drugsales:notify", "You wasted time so the person left")
+			TriggerEvent("qb-menu:client:closeMenu")
+		end
+		SetPedAsNoLongerNeeded(ped)
+		isSold = false
+	end)	
+end
+
+local function InitiateSell(ped, randamt)
 	local AlreadySold = false
 	for k, v in pairs(Config.ZoneDrugs) do			
 		if v.zone == CurrentZone.name then
-			Wait(200) -- Dont Change this									
+			Wait(200) -- Dont Change this
 			if not AlreadySold then
-				if QBCore.Functions.HasItem(v.item, 1) then
-					PlayGiveAnim(ped)
+				if QBCore.Functions.HasItem(v.item, randamt) then					
 					AlreadySold = true
-					TriggerServerEvent('cad-drugsales:initiatedrug', v)
+					local SaleMenu = {
+						{
+							header = tostring(randamt).."x of "..QBCore.Shared.Items[tostring(v.item)]['label'].." for "..QBCore.Shared.Round(randamt * v.price, 0).."$",
+							isMenuHeader = true
+						},
+						{
+							header = "Accept Offer",
+							params = {
+								event = 'cad-drugsales:salesinitiate',
+								args = {
+									data = v,
+									amt = randamt,
+									tped = ped
+								}
+							}
+						},
+						{
+							header = "Decline Offer",							
+							params = {
+								event = 'cad-drugsales:salesinitiate',
+								args = 'close'
+							}
+						}
+					}
+					exports[Config.Menu]:openMenu(SaleMenu)
+					TimeoutMenu(ped)	
 				else
 					if Config.Debug then print('You dont have ['..v.item..'] to sell') end
 				end
@@ -66,27 +99,27 @@ end
 
 -- \ Interact with the ped
 local function InteractPed(ped)
-	local Playerjob = QBCore.Functions.GetPlayerData().job				
-	SetEntityAsMissionEntity(ped)	
-	local px,py,pz=table.unpack(GetGameplayCamCoords())
-	TaskTurnPedToFaceCoord(ped, px, py, pz, 10000)
-	Wait(1000)	
+	local Playerjob = QBCore.Functions.GetPlayerData().job
+	SetEntityAsMissionEntity(ped)
+	TaskTurnPedToFaceEntity(ped, PlayerPedId(), Config.SellTimeout*1000)
+	Wait(500)	
 	if Playerjob.name == 'police' then
 		TriggerEvent('QBCore:Notify', 'Locals hate cops!')
-		SetPedAsNoLongerNeeded(ped)		
+		SetPedAsNoLongerNeeded(ped)
 		if Config.Debug then print('Police Not allowed') end
 		return
-	end		
+	end
 	local percent = math.random(1, 100)
-	if percent < Config.ChanceSell then		
-		InitiateSell(ped)
+	local randomamt = math.random(Config.RandomMinSell, Config.RandomMaxSell)
+	if percent < Config.ChanceSell then
+		InitiateSell(ped, randomamt)
 	else
 		if Config.Debug then print('Police has been notified') end
 		TriggerEvent('cad-drugsales:notify', 'The buyer is calling the police!')
-		TaskUseMobilePhoneTimed(ped, 8000)		
+		TaskUseMobilePhoneTimed(ped, 8000)
 		PoliceAlert()
-	end
-	SetPedAsNoLongerNeeded(ped)
+		SetPedAsNoLongerNeeded(ped)
+	end	
 end
 
 -- \ Initialize the drug sales
@@ -144,7 +177,7 @@ exports('CreateTarget', CreateTarget)
 
 -- \ Remove Sell Drugs to peds inside the sellzone
 local function RemoveTarget()
-	exports['qb-target']:RemoveGlobalPed({"Talk"})
+	exports[Config.Target]:RemoveGlobalPed({"Talk"})
 end
 exports('RemoveTarget', RemoveTarget)
 
@@ -158,6 +191,19 @@ exports('AllowedTarget', AllowedTarget)
 RegisterNetEvent('cad-drugsales:notify', function(msg)
 	if Config.Debug then print('Notify:'..msg) end
 	TriggerEvent('QBCore:Notify', msg, "primary", 5000)
+end)
+
+-- \ event handler to server (execute server side)
+RegisterNetEvent('cad-drugsales:salesinitiate', function(cad)
+	if cad == 'close' then
+		TriggerEvent("cad-drugsales:notify", "You rejected the offer")
+		TriggerEvent("qb-menu:client:closeMenu")
+		isSold = false
+	else
+		PlayGiveAnim(cad.tped)
+		TriggerServerEvent("cad-drugsales:initiatedrug", cad)
+		isSold = false
+	end
 end)
 
 -- \ Check if inside sellzone

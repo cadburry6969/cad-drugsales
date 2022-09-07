@@ -6,12 +6,13 @@
 - Each zone has its own drug and price
 - You can add multiple drugs to a zone (check config instructions)
 - exports to toggle target on ped (this will toggle allowing/disallowing target even if inside zone)
-  `exports["cad-drugsales"]:AllowedTarget()`
+- `exports["cad-drugsales"]:AllowedTarget(bool) --[true/false]`
 
 # Dependencies
 
 - qb-core
 - qb-target
+- qb-menu
 - PolyZone
 
 # Preview
