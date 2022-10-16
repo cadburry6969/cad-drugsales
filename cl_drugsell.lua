@@ -202,7 +202,7 @@ RegisterNetEvent('cad-drugsales:salesinitiate', function(cad)
 	else
 		PlayGiveAnim(cad.tped)
 		TriggerServerEvent("cad-drugsales:initiatedrug", cad)
-		isSold = false
+		isSold = true
 	end
 end)
 
