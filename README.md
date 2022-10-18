@@ -30,6 +30,6 @@
 # Config Instructions
 
 - For the zone to get linked with the drug you need to do as in image
-  ![image](https://user-images.githubusercontent.com/72443203/169639948-e2ae2ab4-0ae1-42fc-901a-868ab935c723.png)
+![drugsales](https://user-images.githubusercontent.com/72443203/196422177-74083e14-0107-435b-9f8d-43d591096904.png)
 
 Note: Any issue please report on github or discord: https://discord.gg/qxGPARNwNP
