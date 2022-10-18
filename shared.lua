@@ -124,14 +124,23 @@ Config.Zones = { -- \ Sell zones (these zones are linked with the certain drugs 
 
 Config.ZoneDrugs = { -- \ Names should be same as zone names
     -- Multiple drugs can be added to a zone like shown below
-    [1] = {zone="sellzonegroove", item = 'cokebaggy', price = math.random(100, 200)},
-    [2] = {zone="sellzonegroove", item = 'meth', price = math.random(100, 200)},    
+    ["groove"] = {
+        {item = 'cokebaggy', price = math.random(100, 200)},
+        {item = 'weed_amnesia', price = math.random(100, 200)},
+        {item = 'meth', price = math.random(100, 200)},
+    },    
 
-    [2] = {zone="sellzonevinewood", item = 'cokebaggy', price = math.random(100, 200)},
-    [3] = {zone="sellzonevinewood", item = 'meth', price = math.random(100, 200)},    
+    ["vinewood"] = {        
+        {item = 'cokebaggy', price = math.random(100, 200)},
+        {item = 'weed_amnesia', price = math.random(100, 200)},
+        {item = 'meth', price = math.random(100, 200)},
+    },    
 
-    [4] = {zone="sellzoneforumdr", item = 'cokebaggy', price = math.random(100, 200)},
-    [5] = {zone="sellzoneforumdr", item = 'meth', price = math.random(100, 200)},    
+    ["forumdr"] = {
+        {item = 'cokebaggy', price = math.random(100, 200)},
+        {item = 'weed_amnesia', price = math.random(100, 200)},
+        {item = 'meth', price = math.random(100, 200)},
+    },
 }
 
 Config.BlacklistPeds = { -- \ Ped models that should be blacklisted

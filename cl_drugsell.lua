@@ -5,12 +5,12 @@ local SoldPeds = {}
 local SellZone = {}
 local CurrentZone = nil
 local AllowedTarget = true
-local isSold = false
+local InitiateSellProgress = false
 
 -- \ Create Zones for the drug sales
 for k, v in pairs(Config.Zones) do
     SellZone[k] = PolyZone:Create(v.points, {
-        name= 'sellzone'..k,
+        name= k,
         minZ = v.minZ,
         maxZ = v.maxZ,
         debugPoly = Config.Debug,
@@ -46,51 +46,63 @@ end
 
 local function TimeoutMenu(ped)
 	SetTimeout(Config.SellTimeout*1000, function()
-		if not isSold then
+		if InitiateSellProgress then
 			TriggerEvent("cad-drugsales:notify", "You wasted time so the person left")
 			TriggerEvent("qb-menu:client:closeMenu")
+			SetPedAsNoLongerNeeded(ped)
 		end
-		SetPedAsNoLongerNeeded(ped)
-		isSold = false
 	end)	
 end
 
 local function InitiateSell(ped, randamt)
 	local AlreadySold = false
-	for k, v in pairs(Config.ZoneDrugs) do			
-		if v.zone == CurrentZone.name then
+	for k, v in pairs(Config.ZoneDrugs) do
+		if k == CurrentZone.name then			
 			Wait(200) -- Dont Change this
-			if not AlreadySold then
-				if QBCore.Functions.HasItem(v.item, randamt) then					
-					AlreadySold = true
-					local SaleMenu = {
-						{
-							header = tostring(randamt).."x of "..QBCore.Shared.Items[tostring(v.item)]['label'].." for "..QBCore.Shared.Round(randamt * v.price, 0).."$",
-							isMenuHeader = true
-						},
-						{
-							header = "Accept Offer",
-							params = {
-								event = 'cad-drugsales:salesinitiate',
-								args = {
-									data = v,
-									amt = randamt,
-									tped = ped
+			local tries = 0
+			for a, b in pairs(Config.ZoneDrugs[k]) do
+				local randdrug = Config.ZoneDrugs[k][math.random(1, #Config.ZoneDrugs[k])]
+				local price = randdrug.price
+				if not AlreadySold then
+					if QBCore.Functions.HasItem(randdrug.item, randamt) then					
+						AlreadySold = true
+						InitiateSellProgress = true
+						local SaleMenu = {
+							{
+								header = tostring(randamt).."x of "..QBCore.Shared.Items[tostring(randdrug.item)]['label'].." for "..QBCore.Shared.Round(randamt * price, 0).."$",
+								isMenuHeader = true
+							},
+							{
+								header = "Accept Offer",
+								params = {
+									event = 'cad-drugsales:salesinitiate',
+									args = {
+										type = 'buy',
+										item = randdrug.item,
+										price = price,
+										amt = randamt,
+										tped = ped
+									}
+								}
+							},
+							{
+								header = "Decline Offer",							
+								params = {
+									event = 'cad-drugsales:salesinitiate',
+									args = {
+										type = 'close',
+										tped = ped
+									}
 								}
 							}
-						},
-						{
-							header = "Decline Offer",							
-							params = {
-								event = 'cad-drugsales:salesinitiate',
-								args = 'close'
-							}
 						}
-					}
-					exports[Config.Menu]:openMenu(SaleMenu)
-					TimeoutMenu(ped)	
-				else
-					if Config.Debug then print('You dont have ['..v.item..'] to sell') end
+						exports[Config.Menu]:openMenu(SaleMenu)
+						TimeoutMenu(ped)	
+					else
+						tries += 1
+						if tries == #Config.ZoneDrugs[k] then SetPedAsNoLongerNeeded(ped) end
+						if Config.Debug then print('You dont have ['..b.item..'] to sell') end
+					end
 				end
 			end
 		end
@@ -195,14 +207,16 @@ end)
 
 -- \ event handler to server (execute server side)
 RegisterNetEvent('cad-drugsales:salesinitiate', function(cad)
-	if cad == 'close' then
+	if cad.type == 'close' then
+		InitiateSellProgress = false
 		TriggerEvent("cad-drugsales:notify", "You rejected the offer")
 		TriggerEvent("qb-menu:client:closeMenu")
-		isSold = false
+		SetPedAsNoLongerNeeded(cad.tped)
 	else
+		InitiateSellProgress = false
 		PlayGiveAnim(cad.tped)
 		TriggerServerEvent("cad-drugsales:initiatedrug", cad)
-		isSold = true
+		SetPedAsNoLongerNeeded(cad.tped)
 	end
 end)
 
