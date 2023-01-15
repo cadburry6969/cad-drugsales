@@ -10,6 +10,7 @@ Config.ChanceSell = 70 -- \ Chance to sell drug (in %)
 Config.RandomMinSell = 1 -- \ Random sell amount range min
 Config.RandomMaxSell = 6 -- \ Random sell amount range max
 Config.SellTimeout = 10 -- \ Max time you get to choose your option (secs)
+Config.ShouldToggleSelling = false -- \ This option decides whether the person has to toggle selling in a zone (radialmenu/command) (Recommended: false)
 Config.Zones = { -- \ Sell zones (these zones are linked with the certain drugs check below)
     ['groove'] = {        
         points = {

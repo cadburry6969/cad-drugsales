@@ -4,7 +4,7 @@ local QBCore = exports[Config.Core]:GetCoreObject()
 local SoldPeds = {}
 local SellZone = {}
 local CurrentZone = nil
-local AllowedTarget = true
+local AllowedTarget = (not Config.ShouldToggleSelling)
 local InitiateSellProgress = false
 
 -- \ Create Zones for the drug sales
@@ -64,7 +64,7 @@ local function InitiateSell(ped, randamt)
 				local randdrug = Config.ZoneDrugs[k][math.random(1, #Config.ZoneDrugs[k])]
 				local price = randdrug.price
 				if not AlreadySold then
-					if QBCore.Functions.HasItem(randdrug.item, randamt) then					
+					if exports["qb-inventory"]:HasItem(randdrug.item, randamt) then					
 						AlreadySold = true
 						InitiateSellProgress = true
 						local SaleMenu = {
@@ -100,7 +100,7 @@ local function InitiateSell(ped, randamt)
 						TimeoutMenu(ped)	
 					else
 						tries += 1
-						if tries == #Config.ZoneDrugs[k] then SetPedAsNoLongerNeeded(ped) end
+						if tries == #Config.ZoneDrugs[k] then SetPedAsNoLongerNeeded(ped) TriggerEvent('QBCore:Notify', 'Person wanted more stuff but you dint have!') end
 						if Config.Debug then print('You dont have ['..b.item..'] to sell') end
 					end
 				end
@@ -174,7 +174,7 @@ local function CreateTarget()
 				end,
 				canInteract = function(entity)
 					if CurrentZone then
-						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(PlayerPedId()) then								
+						if not IsPedDeadOrDying(entity) and not IsPedInAnyVehicle(entity) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(PlayerPedId()) then
 							return true
 						end         						
 					end					 
@@ -220,6 +220,22 @@ RegisterNetEvent('cad-drugsales:salesinitiate', function(cad)
 	end
 end)
 
+-- \ Toggle selling (radialmenu)
+RegisterNetEvent('cad-drugsales:toggleselling', function()
+	if Config.ShouldToggleSelling then
+		AllowedTarget = not AllowedTarget
+		if AllowedTarget then
+			CreateTarget()
+			TriggerEvent("cad-drugsales:notify", "Enabled Selling")
+		else
+			RemoveTarget()
+			TriggerEvent("cad-drugsales:notify", "Disabled Selling")
+		end
+	else
+		TriggerEvent("cad-drugsales:notify", "Option disabled")
+	end
+end)
+
 -- \ Check if inside sellzone
 CreateThread(function()
 	while true do
@@ -231,9 +247,9 @@ CreateThread(function()
 					if SellZone[k]:isPointInside(coord) then						
 						SellZone[k].inside = true
                         CurrentZone = SellZone[k]	
-						if not SellZone[k].target and AllowedTarget then
+						if not SellZone[k].target then
 							SellZone[k].target = true
-							CreateTarget()							
+							if not Config.ShouldToggleSelling then CreateTarget() end
 							if Config.Debug then print("Target Added ["..CurrentZone.name.."]") end
 						end
 						if Config.Debug then print(json.encode(CurrentZone)) end
@@ -241,7 +257,7 @@ CreateThread(function()
 						SellZone[k].inside = false
 						if SellZone[k].target then
 							SellZone[k].target = false
-							RemoveTarget()
+							if not Config.ShouldToggleSelling then RemoveTarget() end
 							if Config.Debug then print("Target Removed ["..CurrentZone.name.."]") end
 						end
 					end

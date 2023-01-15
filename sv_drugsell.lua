@@ -53,3 +53,9 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 		end
 	end
 end)
+
+if Config.ShouldToggleSelling then
+	QBCore.Commands.Add("toggleselling", "Toggle selling in a zone", {}, false, function(source, _)
+		TriggerClientEvent("cad-drugsales:toggleselling", source)
+	end)
+end
