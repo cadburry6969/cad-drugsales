@@ -28,7 +28,7 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
 	if Player then
-		local price = math.floor(cad.price * cad.amt)
+		local price = cad.price * cad.amt
 		if Config.GiveBonusOnPolice then
 			local copsamount = GetDeliveryCops()
 			if copsamount > 0 and copsamount < 3 then
@@ -39,6 +39,7 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 				price = price * 2.0            
 			end
 		end
+		price = math.floor(price)
 		if Player.Functions.GetItemByName(tostring(cad.item)) then
 			if Player.Functions.RemoveItem(tostring(cad.item), cad.amt) then
 				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[tostring(cad.item)], "remove", cad.amt)
