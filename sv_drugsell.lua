@@ -40,9 +40,10 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 			end
 		end
 		price = math.floor(price)
-		if Player.Functions.GetItemByName(tostring(cad.item)) then
-			if Player.Functions.RemoveItem(tostring(cad.item), cad.amt) then
-				TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[tostring(cad.item)], "remove", cad.amt)
+		if Config.Inventory == 'ox' then
+			local item = exports.ox_inventory:GetItem(src, tostring(cad.item), nil, true)
+			if item and item >= cad.amt then
+				exports.ox_inventory:RemoveItem(src, tostring(cad.item), cad.amt)
 				Player.Functions.AddMoney("cash", price)
 				TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $'..price)
 				if Config.Debug then print('You got '..cad.amt..' '..cad.item..' for $'..price) end
@@ -50,7 +51,18 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 				TriggerClientEvent('cad-drugsales:notify', src, 'You could not sell your '..cad.item..'!')
 			end
 		else
-			TriggerClientEvent('cad-drugsales:notify', src, 'You do not have any '..cad.item..' to sell!')
+			if Player.Functions.GetItemByName(tostring(cad.item)) then
+				if Player.Functions.RemoveItem(tostring(cad.item), cad.amt) then
+					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[tostring(cad.item)], "remove", cad.amt)
+					Player.Functions.AddMoney("cash", price)
+					TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $'..price)
+					if Config.Debug then print('You got '..cad.amt..' '..cad.item..' for $'..price) end
+				else
+					TriggerClientEvent('cad-drugsales:notify', src, 'You could not sell your '..cad.item..'!')
+				end
+			else
+				TriggerClientEvent('cad-drugsales:notify', src, 'You do not have any '..cad.item..' to sell!')
+			end			
 		end
 	end
 end)

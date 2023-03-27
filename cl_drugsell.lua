@@ -54,6 +54,15 @@ local function TimeoutMenu(ped)
 	end)	
 end
 
+local function HasItem(item, amount)
+	if Config.Inventory == 'ox' then
+		local count = exports.ox_inventory:Search('count', item)
+		return count >= amount
+	else
+		return exports["qb-inventory"]:HasItem(item, amount)
+	end
+end
+
 local function InitiateSell(ped, randamt)
 	local AlreadySold = false
 	for k, v in pairs(Config.ZoneDrugs) do
@@ -64,7 +73,7 @@ local function InitiateSell(ped, randamt)
 				local randdrug = Config.ZoneDrugs[k][math.random(1, #Config.ZoneDrugs[k])]
 				local price = randdrug.price
 				if not AlreadySold then
-					if exports["qb-inventory"]:HasItem(randdrug.item, randamt) then					
+					if HasItem(randdrug.item, randamt) then					
 						AlreadySold = true
 						InitiateSellProgress = true
 						local SaleMenu = {
