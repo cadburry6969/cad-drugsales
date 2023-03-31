@@ -51,15 +51,17 @@ local function TimeoutMenu(ped)
 			TriggerEvent("qb-menu:client:closeMenu")
 			SetPedAsNoLongerNeeded(ped)
 		end
-	end)	
+	end)
 end
 
 local function HasItem(item, amount)
 	if Config.Inventory == 'ox' then
 		local count = exports.ox_inventory:Search('count', item)
 		return count >= amount
-	else
+	elseif Config.Inventory == 'qb' then
 		return exports["qb-inventory"]:HasItem(item, amount)
+	else
+		return QBCore.Functions.HasItem(item, amount)
 	end
 end
 
