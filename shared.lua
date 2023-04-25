@@ -1,19 +1,19 @@
-
 Config = {}
-Config.Debug = false -- \ Set to true to enable debugging
-Config.Core = "qb-core" -- \ The name of the core (Default: qb-core)
-Config.Target = "qb-target" -- \ The target name (Default: qb-target)
-Config.Menu = "qb-menu" -- \ The target name (Default: qb-menu)
-Config.Inventory = "oldqb" -- \ What inventory are you using? ('oldqb', 'qb' / 'ox')
-Config.MinimumCops = 0 -- \ Minimum cops required to sell drugs
-Config.GiveBonusOnPolice = true -- \ Give bonus on selling drugs to police (Edit on server side)
-Config.ChanceSell = 70 -- \ Chance to sell drug (in %)
-Config.RandomMinSell = 1 -- \ Random sell amount range min
-Config.RandomMaxSell = 6 -- \ Random sell amount range max
-Config.SellTimeout = 10 -- \ Max time you get to choose your option (secs)
+Config.Debug = false               -- \ Set to true to enable debugging
+Config.Core = "qb-core"            -- \ The name of the core (Default: qb-core)
+Config.Target = "qb-target"        -- \ The target name (Default: qb-target)
+Config.Menu = "qb-menu"            -- \ The target name (Default: qb-menu)
+Config.RadialMenu = "qb-radialmenu"-- \ The target name (Default: qb-radialmenu)
+Config.Inventory = "qb"            -- \ What inventory are you using? ('qb' / 'ox')
+Config.MinimumCops = 0             -- \ Minimum cops required to sell drugs
+Config.GiveBonusOnPolice = true    -- \ Give bonus on selling drugs to police (Edit on server side)
+Config.ChanceSell = 70             -- \ Chance to sell drug (in %)
+Config.RandomMinSell = 1           -- \ Random sell amount range min
+Config.RandomMaxSell = 6           -- \ Random sell amount range max
+Config.SellTimeout = 10            -- \ Max time you get to choose your option (secs)
 Config.ShouldToggleSelling = false -- \ This option decides whether the person has to toggle selling in a zone (radialmenu/command) (Recommended: false)
-Config.Zones = { -- \ Sell zones (these zones are linked with the certain drugs check below)
-    ['groove'] = {        
+Config.Zones = {                   -- \ Sell zones (these zones are linked with the certain drugs check below)
+    ['groove'] = {
         points = {
             vector2(250.90760803223, -1866.3974609375),
             vector2(146.70475769043, -1990.5447998047),
@@ -27,7 +27,7 @@ Config.Zones = { -- \ Sell zones (these zones are linked with the certain drugs 
             vector2(49.590217590332, -1689.9705810547)
         },
         minZ = 18.035144805908,
-        maxZ = 75.059997558594,                      
+        maxZ = 75.059997558594,
     },
     ['vinewood'] = {
         points = {
@@ -124,24 +124,22 @@ Config.Zones = { -- \ Sell zones (these zones are linked with the certain drugs 
     },
 }
 
-Config.ZoneDrugs = { -- \ Names should be same as zone names
+Config.ZoneDrugs = {            -- \ Names should be same as zone names
     -- Multiple drugs can be added to a zone like shown below
     ["groove"] = {
-        {item = 'cokebaggy', price = math.random(100, 200)},
-        {item = 'weed_amnesia', price = math.random(100, 200)},
-        {item = 'meth', price = math.random(100, 200)},
-    },    
-
-    ["vinewood"] = {        
-        {item = 'cokebaggy', price = math.random(100, 200)},
-        {item = 'weed_amnesia', price = math.random(100, 200)},
-        {item = 'meth', price = math.random(100, 200)},
-    },    
-
+        { item = 'cokebaggy',    price = math.random(100, 200) },
+        { item = 'weed_amnesia', price = math.random(100, 200) },
+        { item = 'meth',         price = math.random(100, 200) },
+    },
+    ["vinewood"] = {
+        { item = 'cokebaggy',    price = math.random(100, 200) },
+        { item = 'weed_amnesia', price = math.random(100, 200) },
+        { item = 'meth',         price = math.random(100, 200) },
+    },
     ["forumdr"] = {
-        {item = 'cokebaggy', price = math.random(100, 200)},
-        {item = 'weed_amnesia', price = math.random(100, 200)},
-        {item = 'meth', price = math.random(100, 200)},
+        { item = 'cokebaggy',    price = math.random(100, 200) },
+        { item = 'weed_amnesia', price = math.random(100, 200) },
+        { item = 'meth',         price = math.random(100, 200) },
     },
 }
 

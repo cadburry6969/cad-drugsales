@@ -3,22 +3,22 @@ game 'gta5'
 
 author 'Cadburry#7547'
 description 'Drug Sales with PolyZone and Target'
-version '2.0.8'
+version '2.1'
 
 shared_scripts {
     'shared.lua',
 }
 
-server_scripts {    
+server_scripts {
     'sv_drugsell.lua',
 }
 
 client_scripts {
     '@PolyZone/client.lua',
-	'@PolyZone/BoxZone.lua',
-	'@PolyZone/EntityZone.lua',
-	'@PolyZone/CircleZone.lua',
-	'@PolyZone/ComboZone.lua',   
+    '@PolyZone/BoxZone.lua',
+    '@PolyZone/EntityZone.lua',
+    '@PolyZone/CircleZone.lua',
+    '@PolyZone/ComboZone.lua',
     'cl_drugsell.lua'
 }
 
