@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Cadburry#7547'
 description 'Drug Sales with PolyZone and Target'
-version '2.1'
+version '2.1.2'
 
 shared_scripts {
     'shared.lua',
