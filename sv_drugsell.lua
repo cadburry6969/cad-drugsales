@@ -65,8 +65,8 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 				TriggerClientEvent('cad-drugsales:notify', src, 'You do not have any ' .. cad.item .. ' to sell!')
 			end
 		else
-			if exports['qb-inventory']:GetItemByName(item) then
-				if exports['qb-inventory']:RemoveItem(item, cad.amt) then
+			if exports['qb-inventory']:GetItemByName(src, item) then
+				if exports['qb-inventory']:RemoveItem(src, item, cad.amt) then
 					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], "remove", cad.amt)
 					Player.Functions.AddMoney("cash", price)
 					TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
