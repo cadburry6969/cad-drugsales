@@ -40,21 +40,34 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 			end
 		end
 		price = math.floor(price)
+		local item = tostring(cad.item)
 		if Config.Inventory == 'ox' then
-			local item = exports.ox_inventory:GetItem(src, tostring(cad.item), nil, true)
+			local item = exports.ox_inventory:GetItem(src, item, nil, true)
 			if item and item >= cad.amt then
-				exports.ox_inventory:RemoveItem(src, tostring(cad.item), cad.amt)
+				exports.ox_inventory:RemoveItem(src, item, cad.amt)
 				Player.Functions.AddMoney("cash", price)
 				TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
 				if Config.Debug then print('You got ' .. cad.amt .. ' ' .. cad.item .. ' for $' .. price) end
 			else
 				TriggerClientEvent('cad-drugsales:notify', src, 'You could not sell your ' .. cad.item .. '!')
 			end
+		elseif Config.Inventory == 'oldqb' then
+			if Player.Functions.GetItemByName(item) then
+				if Player.Functions.RemoveItem(item, cad.amt) then
+					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], "remove", cad.amt)
+					Player.Functions.AddMoney("cash", price)
+					TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
+					if Config.Debug then print('You got ' .. cad.amt .. ' ' .. cad.item .. ' for $' .. price) end
+				else
+					TriggerClientEvent('cad-drugsales:notify', src, 'You could not sell your ' .. cad.item .. '!')
+				end
+			else
+				TriggerClientEvent('cad-drugsales:notify', src, 'You do not have any ' .. cad.item .. ' to sell!')
+			end
 		else
-			if Player.Functions.GetItemByName(tostring(cad.item)) then
-				if Player.Functions.RemoveItem(tostring(cad.item), cad.amt) then
-					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[tostring(cad.item)], "remove",
-					cad.amt)
+			if exports['qb-inventory']:GetItemByName(item) then
+				if exports['qb-inventory']:RemoveItem(item, cad.amt) then
+					TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], "remove", cad.amt)
 					Player.Functions.AddMoney("cash", price)
 					TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
 					if Config.Debug then print('You got ' .. cad.amt .. ' ' .. cad.item .. ' for $' .. price) end
