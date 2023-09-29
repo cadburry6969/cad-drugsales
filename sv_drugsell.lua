@@ -42,12 +42,13 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(cad)
 		price = math.floor(price)
 		local item = tostring(cad.item)
 		if Config.Inventory == 'ox' then
-			local item = exports.ox_inventory:GetItem(src, item, nil, true)
-			if item and item >= cad.amt then
-				exports.ox_inventory:RemoveItem(src, item, cad.amt)
-				Player.Functions.AddMoney("cash", price)
-				TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
-				if Config.Debug then print('You got ' .. cad.amt .. ' ' .. cad.item .. ' for $' .. price) end
+			local itemCount = exports.ox_inventory:GetItem(src, item, nil, true)
+			if itemCount and itemCount >= cad.amt then
+				if exports.ox_inventory:RemoveItem(src, item, cad.amt) then
+					Player.Functions.AddMoney("cash", price)
+					TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
+					if Config.Debug then print('You got ' .. cad.amt .. ' ' .. cad.item .. ' for $' .. price) end
+				end
 			else
 				TriggerClientEvent('cad-drugsales:notify', src, 'You could not sell your ' .. cad.item .. '!')
 			end
