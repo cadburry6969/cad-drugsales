@@ -191,6 +191,16 @@ local function isPedBlacklisted(ped)
 	return false
 end
 
+local function canTarget(entity)
+	if CurrentZone then
+		local isVehicle = Config.SellPedOnVehicle or not IsPedInAnyVehicle(entity, false)
+		if not IsPedDeadOrDying(entity, false) and isVehicle and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(PlayerPedId(), false) then
+			return true
+		end
+	end
+	return false
+end
+
 -- \ Sell Drugs to peds inside the sellzone
 local function CreateTarget()
 	exports[Config.Target]:AddGlobalPed({
@@ -201,24 +211,35 @@ local function CreateTarget()
 				action = function(entity)
 					InitiateSales(entity)
 				end,
-				canInteract = function(entity)
-					if CurrentZone then
-						if not IsPedDeadOrDying(entity, false) and not IsPedInAnyVehicle(entity, false) and CurrentZone.inside and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(PlayerPedId(), false) then
-							return true
-						end
-					end
-					return false
-				end,
+				canInteract = canTarget,
 			}
 		},
 		distance = 4,
 	})
+	if Config.SellPedOnVehicle then
+		exports[Config.Target]:AddGlobalVehicle({
+			options = {
+				{
+					icon = 'fas fa-comments',
+					label = 'Talk',
+					action = function(entity)
+						local ped = GetPedInVehicleSeat(entity, -1)
+						if ped == 0 then return end
+						InitiateSales(ped)
+					end,
+					canInteract = canTarget,
+				}
+			},
+			distance = 4,
+		})
+	end
 end
 exports('CreateTarget', CreateTarget)
 
 -- \ Remove Sell Drugs to peds inside the sellzone
 local function RemoveTarget()
 	exports[Config.Target]:RemoveGlobalPed({"Talk"})
+	if Config.SellPedOnVehicle then exports[Config.Target]:RemoveGlobalVehicle({'Talk'}) end
 end
 exports('RemoveTarget', RemoveTarget)
 

@@ -7,6 +7,7 @@ Config.RadialMenu = "qb-radialmenu"-- \ The target name (Default: qb-radialmenu)
 Config.Inventory = "qb"            -- \ What inventory are you using? ('oldqb' / 'qb' / 'ox')
 Config.MinimumCops = 0             -- \ Minimum cops required to sell drugs
 Config.GiveBonusOnPolice = true    -- \ Give bonus on selling drugs to police (Edit on server side)
+Config.SellPedOnVehicle = false    -- \ Allow Selling to peds sitting in vehicle
 Config.ChanceSell = 70             -- \ Chance to sell drug (in %)
 Config.RandomMinSell = 1           -- \ Random sell amount range min
 Config.RandomMaxSell = 6           -- \ Random sell amount range max
