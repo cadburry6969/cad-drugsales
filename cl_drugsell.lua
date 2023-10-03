@@ -227,7 +227,11 @@ local function CreateTarget()
 						if ped == 0 then return end
 						InitiateSales(ped)
 					end,
-					canInteract = canTarget,
+					canInteract = function(entity)
+						local ped = GetPedInVehicleSeat(entity, -1)
+						if ped == 0 then return false end
+						canTarget(ped)
+					end,
 				}
 			},
 			distance = 4,
