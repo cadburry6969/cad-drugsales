@@ -16,7 +16,7 @@ Config.Target = 'qb' -- 'qb', 'ox'
 Config.Radial = 'qb' -- 'qb', 'ox'
 
 -- what dispatch to use for police alerts?
-Config.Dispatch = 'qb' -- 'qb', 'ps'
+Config.Dispatch = 'qb' -- 'qb', 'ps', 'moz', 'cd', 'custom'
 
 -- Minimum cops required to sell drugs
 Config.MinimumCops = 0

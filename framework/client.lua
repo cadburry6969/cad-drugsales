@@ -144,6 +144,42 @@ if Config.Dispatch == 'qb' then
     end
 end
 
+if Config.Dispatch == 'moz' then
+    function Framework:PoliceAlert()
+        exports['moz-dispatch']:SuspiciousHandoff()
+    end
+end
+
+if Config.Dispatch == 'cd' then
+    function Framework:PoliceAlert()
+        local data = exports['cd_dispatch']:GetPlayerInfo()
+        TriggerServerEvent('cd_dispatch:AddNotification', {
+            job_table = { 'police' },
+            coords = data.coords,
+            title = '10-38 Suspicious Handoff',
+            message = 'A '..data.sex..' found with a suspious package at '..data.street,
+            flash = 0,
+            unique_id = data.unique_id,
+            sound = 1,
+            blip = {
+                sprite = 51,
+                scale = 1.2,
+                colour = 1,
+                flashes = false,
+                text = '10-38 Suspicious Handoff',
+                time = 5,
+                radius = 0,
+            }
+        })
+    end
+end
+
+if Config.Dispatch == 'custom' then
+    function Framework:PoliceAlert()
+        -- add your custom dispatch alert here
+    end
+end
+
 function Framework:GetSellItems(zone)
     if Config.SellAnywhere then
         return Config.SellItems
