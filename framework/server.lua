@@ -55,6 +55,47 @@ if Config.Framework == 'qb' then
     end
 end
 
+if Config.Framework == 'esx' then
+    local ESX = exports.es_extended:getSharedObject()
+
+    function Framework:GetCops()
+        local amount = 0
+        for _, v in pairs(ESX.GetPlayers()) do
+            local player = ESX.GetPlayerFromId(v)
+            if player then
+                if player.job.name == "police" then
+                    amount = amount + 1
+                end
+            end
+        end
+        return amount
+    end
+
+    function Framework:GetCopBonus(price)
+        local copsamount = Framework:GetCops()
+        if copsamount > 0 and copsamount < 3 then
+			price = price * 1.2
+		elseif copsamount >= 3 and copsamount <= 6 then
+			price = price * 1.5
+		elseif copsamount >= 7 and copsamount <= 10 then
+			price = price * 2.0
+		end
+        return price
+    end
+
+    function Framework:AddMoney(source, type, amount, reason)
+        local player = ESX.GetPlayerFromId(source)
+        if not player then return false end
+        return player.addMoney(amount)
+    end
+
+    function Framework:RemoveMoney(source, type, amount, reason)
+        local player = ESX.GetPlayerFromId(source)
+        if not player then return false end
+        return player.removeMoney(amount)
+    end
+end
+
 if Config.Inventory == 'ox' then
     function Framework:AddItem(source, item, amount)
         exports.ox_inventory:AddItem(source, item, amount)

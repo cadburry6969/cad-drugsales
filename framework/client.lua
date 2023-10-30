@@ -35,6 +35,19 @@ if Config.Framework == 'qb' then
     end
 end
 
+if Config.Framework == 'esx' then
+    local ESX = exports.es_extended:getSharedObject()
+
+    function Framework:Notify(text)
+        ESX.ShowNotification(text, 'success', 3000)
+    end
+
+    function Framework:GetCurrentJob()
+        local playerData = ESX.GetPlayerData()
+        return playerData.job
+    end
+end
+
 if Config.Inventory == 'ox' then
     function Framework:GetItemName(item)
         return exports['qb-Inventory']:HasItem(item)
