@@ -1,32 +1,26 @@
 fx_version 'cerulean'
 game 'gta5'
+lua54 'yes'
 
-author 'Cadburry#7547'
-description 'Drug Sales with PolyZone and Target'
-version '2.1.2'
+author 'Cadburry (ByteCode Studios)'
+description 'Drug sales utilizing zones and target'
+version '2.6'
 
 shared_scripts {
-    'shared.lua',
-}
-
-server_scripts {
-    'sv_drugsell.lua',
+    '@ox_lib/init.lua',
+    'config.lua',
 }
 
 client_scripts {
-    '@PolyZone/client.lua',
-    '@PolyZone/BoxZone.lua',
-    '@PolyZone/EntityZone.lua',
-    '@PolyZone/CircleZone.lua',
-    '@PolyZone/ComboZone.lua',
-    'cl_drugsell.lua'
+    'framework/client.lua',
+    'scripts/client.lua',
+}
+
+server_scripts {
+    'framework/server.lua',
+    'scripts/server.lua',
 }
 
 dependencies {
-    'qb-core',
-    'PolyZone',
-    'qb-target',
-    'qb-menu'
+    'ox_lib'
 }
-
-lua54 'yes'
