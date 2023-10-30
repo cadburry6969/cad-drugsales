@@ -62,7 +62,7 @@ local function showSellMenu(ped, item, amt, price)
 end
 
 local function initiateSell(ped)
-	if not CurrentZone then return end
+	if not CurrentZone and not Config.SellAnywhere then return end
 	local items = Framework:GetSellItems(CurrentZone)
 	if not items then return end
 	local randamt = math.random(Config.RandomSell.min, Config.RandomSell.max)
@@ -139,9 +139,9 @@ local function isPedBlacklisted(ped)
 end
 
 local function canTarget(entity)
-	if not CurrentZone then return false end
+	if not CurrentZone and not Config.SellAnywhere then return false end
 	local isVehicle = Config.SellPedOnVehicle or not IsPedInAnyVehicle(entity, false)
-	if not IsPedDeadOrDying(entity, false) and isVehicle and CurrentZone and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(cache.ped, false) then
+	if not IsPedDeadOrDying(entity, false) and isVehicle and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(cache.ped, false) then
 		return true
 	end
 end
@@ -252,6 +252,7 @@ TriggerEvent('chat:addSuggestion', '/cornersell', 'Toggle corner selling (Zone O
 end
 
 -- Create Zones for the drug sales
+if not Config.SellAnywhere then
 for k, v in pairs(Config.SellZones) do
     lib.zones.poly({
 		points = v.points,
@@ -270,4 +271,5 @@ for k, v in pairs(Config.SellZones) do
 			if Config.Debug then print("Target Removed ["..k.."]") end
 		end
 	})
+end
 end
