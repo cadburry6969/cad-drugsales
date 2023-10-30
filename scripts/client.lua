@@ -260,16 +260,44 @@ for k, v in pairs(Config.SellZones) do
 		debug = Config.Debug,
 		onEnter = function()
 			CurrentZone = v
-			if not Config.ShouldToggleSelling then createTarget() end
+			if not Config.ShouldToggleSelling and Config.Target then createTarget() end
 			if Config.Debug then print("Target Added ["..k.."]") end
 			if Config.Debug then print(json.encode(CurrentZone)) end
 		end,
 		onExit = function()
 			if not CurrentZone then return end
 			CurrentZone = nil
-			if not Config.ShouldToggleSelling then removeTarget() end
+			if not Config.ShouldToggleSelling and Config.Target then removeTarget() end
 			if Config.Debug then print("Target Removed ["..k.."]") end
 		end
 	})
 end
+end
+
+-- Create target on ped if target is disabled
+if not Config.Target then
+CreateThread(function()
+	local success = false
+	while true do
+		Wait(10)
+		local handle, ped = FindFirstPed()
+		repeat
+			success, ped = FindNextPed(handle)
+			if not cache.vehicle then
+				if DoesEntityExist(ped) and canTarget(ped) then
+					local myPos = GetEntityCoords(cache.ped)
+					local pedPos = GetEntityCoords(ped)
+					local distance = #(vec3(myPos.x, myPos.y, myPos.z)- vec3(pedPos.x, pedPos.y, pedPos.z))
+					if distance < 2 and ped ~= cache.ped and not hasSoldPed(ped) then
+						Framework:DrawText3D(pedPos.x, pedPos.y, pedPos.z, '[E] Talk')
+						if IsControlJustPressed(0, 38) then
+							initiateSales(ped)
+						end
+					end
+				end
+			end
+		until not success
+		EndFindPed(handle)
+	end
+end)
 end

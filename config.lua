@@ -10,7 +10,7 @@ Config.Framework = 'qb' -- 'qb', 'esx'
 Config.Inventory = 'oldqb' -- 'oldqb', 'qb', 'ox'
 
 -- what target do you use?
-Config.Target = 'qb' -- 'qb', 'ox'
+Config.Target = 'qb' -- 'qb', 'ox' (false: DrawText3D)
 
 -- what radial menu do you use?
 Config.Radial = 'qb' -- 'qb', 'ox'
