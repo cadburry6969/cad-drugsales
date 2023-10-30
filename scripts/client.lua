@@ -66,24 +66,24 @@ local function initiateSell(ped)
 	local items = Framework:GetSellItems(CurrentZone)
 	if not items then return end
 	local randamt = math.random(Config.RandomSell.min, Config.RandomSell.max)
-	local tries = 0
-	for i=1, #items do
+	local itemCount = #items
+	local hasSold = false
+	for i=1, itemCount, 1 do
 		Wait(200) -- don't change this
 		local data = items[math.random(1, #items)]
-		local maxamt = Framework:GetItemCount(data.item)
+		local amount = Framework:GetItemCount(data.item)
 		local price = data.price
-		if maxamt ~= 0 then
-			if randamt > maxamt then randamt = 1 end
+		if amount > 0 then
+			if randamt > amount then randamt = amount end
+			hasSold = true
 			showSellMenu(ped, data.item, randamt, price)
 			break
-		else
-			tries += i
-			if tries == #items then
-				SetPedAsNoLongerNeeded(ped)
-				Framework:Notify('Person was interested to buy, but you dint have enough to sell!')
-			end
-			if Config.Debug then print('You dont have ['..data.item..'] to sell') end
 		end
+	end
+	if not hasSold then
+		SetPedAsNoLongerNeeded(ped)
+		Framework:Notify('Person was interested to buy, but you dint have enough to sell!')
+		if Config.Debug then print('You dont have anything to sell') end
 	end
 end
 

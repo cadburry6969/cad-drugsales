@@ -86,23 +86,26 @@ if Config.Framework == 'esx' then
     function Framework:AddMoney(source, type, amount, reason)
         local player = ESX.GetPlayerFromId(source)
         if not player then return false end
-        return player.addMoney(amount)
+        player.addMoney(amount)
+        return true
     end
 
     function Framework:RemoveMoney(source, type, amount, reason)
         local player = ESX.GetPlayerFromId(source)
         if not player then return false end
-        return player.removeMoney(amount)
+        if player.getAccount('cash').money < amount then return false end
+        player.removeMoney(amount)
+        return true
     end
 end
 
 if Config.Inventory == 'ox' then
     function Framework:AddItem(source, item, amount)
-        exports.ox_inventory:AddItem(source, item, amount)
+        return exports.ox_inventory:AddItem(source, item, amount)
     end
 
     function Framework:RemoveItem(source, item, amount)
-        exports.ox_inventory:RemoveItem(source, item, amount)
+        return exports.ox_inventory:RemoveItem(source, item, amount)
     end
 end
 

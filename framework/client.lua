@@ -49,8 +49,10 @@ if Config.Framework == 'esx' then
 end
 
 if Config.Inventory == 'ox' then
-    function Framework:GetItemName(item)
-        return exports['qb-Inventory']:HasItem(item)
+    local items = exports.ox_inventory:Items()
+
+    function Framework:GetItemLabel(item)
+        return items[item].label or 'Unknown'
     end
 
     function Framework:GetItemCount(item)
@@ -59,10 +61,6 @@ if Config.Inventory == 'ox' then
 end
 
 if Config.Inventory == 'qb' then
-    function Framework:GetItemName(item)
-        return exports['qb-Inventory']:HasItem(item)
-    end
-
     function Framework:GetItemCount(item)
         return exports['qb-Inventory']:HasItem(item)
     end
