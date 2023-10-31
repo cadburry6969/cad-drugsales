@@ -73,13 +73,11 @@ local function initiateSell(ped)
 		local data = items[math.random(1, #items)]
 		local amount = Framework:GetItemCount(data.item)
 		local price = data.price
-		if amount then
-			if amount > 0 then
-				if randamt > amount then randamt = amount end
-				hasSold = true
-				showSellMenu(ped, data.item, randamt, price)
-				break
-			end
+		if amount and amount > 0 then
+			if randamt > amount then randamt = amount end
+			hasSold = true
+			showSellMenu(ped, data.item, randamt, price)
+			break
 		end
 	end
 	if not hasSold then

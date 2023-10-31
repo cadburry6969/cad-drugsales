@@ -16,12 +16,11 @@ if Config.Framework == 'qb' then
         PlayerData = val
     end)
 
-    if Config.Inventory ~= 'ox' then
+    if Config.Inventory == 'qb' then
         function Framework:GetItemLabel(item)
             return QBCore.Shared.Items[item]['label'] or 'Unknown'
         end
-    end
-    if Config.Inventory == 'oldqb' then
+
         function Framework:GetItemCount(item)
             local amount = 0
             for _, v in pairs(PlayerData.items) do
@@ -57,12 +56,6 @@ if Config.Inventory == 'ox' then
 
     function Framework:GetItemCount(item)
 		return exports.ox_inventory:Search('count', item)
-    end
-end
-
-if Config.Inventory == 'qb' then
-    function Framework:GetItemCount(item)
-        return exports['qb-inventory']:HasItem(item)
     end
 end
 
