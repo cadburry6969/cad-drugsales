@@ -62,7 +62,7 @@ end
 
 if Config.Inventory == 'qb' then
     function Framework:GetItemCount(item)
-        return exports['qb-Inventory']:HasItem(item)
+        return exports['qb-inventory']:HasItem(item)
     end
 end
 
