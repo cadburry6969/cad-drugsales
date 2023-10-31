@@ -254,7 +254,11 @@ TriggerEvent('chat:addSuggestion', '/cornersell', 'Toggle corner selling (Zone O
 end
 
 -- Create Zones for the drug sales
-if not Config.SellAnywhere then
+if Config.SellAnywhere then
+	if not Config.ShouldToggleSelling and Config.Target then
+		createTarget()
+	end
+else
 for k, v in pairs(Config.SellZones) do
     lib.zones.poly({
 		points = v.points,
