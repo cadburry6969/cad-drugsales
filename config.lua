@@ -18,6 +18,9 @@ Config.Radial = 'qb' -- 'qb', 'ox'
 -- what dispatch to use for police alerts?
 Config.Dispatch = 'qb' -- 'qb', 'ps', 'moz', 'cd', 'custom'
 
+-- what menu you want to use?
+Config.OxMenu = true -- true: Ox Menu, false: Ox Context Menu
+
 -- Minimum cops required to sell drugs
 Config.MinimumCops = 0
 

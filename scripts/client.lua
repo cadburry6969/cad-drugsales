@@ -34,27 +34,55 @@ end
 
 local function showSellMenu(ped, item, amt, price)
 	InitiateSellProgress = true
-	lib.registerMenu({
-		id = 'caddrugsales_menu',
-		title = ('%dx of %s for %d$'):format(amt, Framework:GetItemLabel(item), round(amt * price, 0)),
-		position = 'top-right',
-		onClose = function(keyPressed)
-			if keyPressed then
-				TriggerEvent('cad-drugsales:salesinitiate', { type = 'close', tped = ped })
-			end
-		end,
-		options = {
-			{label = 'Accept Offer', args = { type = 'buy', item = item, price = price, amt = amt, tped = ped }},
-			{label = 'Decline Offer', args = { type = 'close', tped = ped }},
-		}
-	}, function(selected, scrollIndex, args)
-		TriggerEvent('cad-drugsales:salesinitiate', args)
-	end)
-	lib.showMenu('caddrugsales_menu')
+	if Config.OxMenu then
+		lib.registerMenu({
+			id = 'caddrugsales_menu',
+			title = ('%dx of %s for %d$'):format(amt, Framework:GetItemLabel(item), round(amt * price, 0)),
+			position = 'top-right',
+			onClose = function(keyPressed)
+				if keyPressed then
+					TriggerEvent('cad-drugsales:salesinitiate', { type = 'close', tped = ped })
+				end
+			end,
+			options = {
+				{label = 'Accept Offer', args = { type = 'buy', item = item, price = price, amt = amt, tped = ped }},
+				{label = 'Decline Offer', args = { type = 'close', tped = ped }},
+			}
+		}, function(selected, scrollIndex, args)
+			TriggerEvent('cad-drugsales:salesinitiate', args)
+		end)
+		lib.showMenu('caddrugsales_menu')
+	else
+		lib.registerContext({
+			id = 'caddrugsales_menu',
+			title = 'Offer Recieved',
+			options = {
+				{
+					title = ('%dx of %s for %d$'):format(amt, Framework:GetItemLabel(item), round(amt * price, 0)),
+					disabled = true,
+				},
+				{
+					title = 'Accept Offer',
+					icon = 'circle-check',
+					onSelect = function()
+						TriggerEvent('cad-drugsales:salesinitiate', { type = 'buy', item = item, price = price, amt = amt, tped = ped })
+					end
+				},
+				{
+					title = 'Decline Offer',
+					icon = 'circle-xmark',
+					onSelect = function()
+						TriggerEvent('cad-drugsales:salesinitiate', { type = 'close', tped = ped })
+					end
+				},
+			}
+		})
+		lib.showContext('caddrugsales_menu')
+	end
 	SetTimeout(Config.SellTimeout*1000, function()
 		if InitiateSellProgress then
 			InitiateSellProgress = false
-			lib.hideMenu()
+			if Config.OxMenu then lib.hideMenu() else lib.hideContext() end
 			Framework:Notify("You wasted time so the person left")
 			SetPedAsNoLongerNeeded(ped)
 		end
@@ -219,7 +247,7 @@ end)
 RegisterNetEvent('cad-drugsales:salesinitiate', function(cad)
 	if cad.type == 'close' then
 		InitiateSellProgress = false
-		lib.hideMenu()
+		if Config.OxMenu then lib.hideMenu() else lib.hideContext() end
 		Framework:Notify("You rejected the offer")
 		SetPedAsNoLongerNeeded(cad.tped)
 	else
