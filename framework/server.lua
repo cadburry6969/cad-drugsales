@@ -39,20 +39,6 @@ if Config.Framework == 'qb' then
         if not player then return false end
         return player.Functions.RemoveMoney(type, amount, reason)
     end
-
-    if Config.Inventory == 'oldqb' then
-        function Framework:AddItem(source, item, amount)
-            local player = QBCore.Functions.GetPlayer(source)
-            if not player then return false end
-            return player.Functions.AddItem(item, amount)
-        end
-
-        function Framework:RemoveItem(source, item, amount)
-            local player = QBCore.Functions.GetPlayer(source)
-            if not player then return false end
-            return player.Functions.RemoveItem(item, amount)
-        end
-    end
 end
 
 if Config.Framework == 'esx' then
@@ -116,6 +102,16 @@ if Config.Inventory == 'qb' then
 
     function Framework:RemoveItem(source, item, amount)
         return exports['qb-inventory']:RemoveItem(source, item, amount)
+    end
+end
+
+if Config.Inventory == 'ps' then
+    function Framework:AddItem(source, item, amount)
+        exports['ps-inventory']:AddItem(source, item, amount)
+    end
+
+    function Framework:RemoveItem(source, item, amount)
+        return exports['ps-inventory']:RemoveItem(source, item, amount)
     end
 end
 

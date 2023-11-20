@@ -7,7 +7,7 @@ Config.Debug = false
 Config.Framework = 'qb' -- 'qb', 'esx'
 
 -- what inventory do you use?
-Config.Inventory = 'qb' -- 'qb', 'ox'
+Config.Inventory = 'qb' -- 'qb', 'ps', 'ox'
 
 -- what target do you use?
 Config.Target = 'qb' -- 'qb', 'ox' (false: DrawText3D)
