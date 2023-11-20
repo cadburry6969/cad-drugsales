@@ -4,7 +4,7 @@ lua54 'yes'
 
 author 'Cadburry (ByteCode Studios)'
 description 'Drug sales utilizing zones and target'
-version '2.6'
+version '2.7'
 
 shared_scripts {
     '@ox_lib/init.lua',
