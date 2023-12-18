@@ -16,7 +16,7 @@ if Config.Framework == 'qb' then
         PlayerData = val
     end)
 
-    if Config.Inventory == 'qb' then
+    if Config.Inventory ~= 'ox' then
         function Framework:GetItemLabel(item)
             return QBCore.Shared.Items[item]['label'] or 'Unknown'
         end
