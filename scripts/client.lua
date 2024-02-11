@@ -146,10 +146,9 @@ local function initiateSales(entity)
 		Framework:Notify('Buyer is not interested to buy now!')
 		if Config.Debug then print('Not Enough Cops') end
 	else
-		local netId = NetworkGetNetworkIdFromEntity(entity)
-		local isSoldtoPed = hasSoldPed(netId)
+		local isSoldtoPed = hasSoldPed(entity)
 		if isSoldtoPed then Framework:Notify('You already spoke with this local') return false end
-		addSoldPed(netId)
+		addSoldPed(entity)
 		InteractPed(entity)
 		if Config.Debug then print('Drug Sales Initiated now proceding to interact') end
 	end
