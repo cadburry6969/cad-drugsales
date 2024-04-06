@@ -22,7 +22,7 @@ if Config.Framework == 'qb' then
 			price = price * 1.2
 		elseif copsamount >= 3 and copsamount <= 6 then
 			price = price * 1.5
-		elseif copsamount >= 7 and copsamount <= 10 then
+		elseif copsamount >= 7 then
 			price = price * 2.0
 		end
         return price
