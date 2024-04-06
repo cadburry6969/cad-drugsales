@@ -21,10 +21,10 @@ Config.Dispatch = 'qb' -- 'qb', 'ps', 'moz', 'cd', 'custom'
 -- what menu you want to use?
 Config.OxMenu = true -- true: Ox Menu, false: Ox Context Menu
 
--- Minimum cops required to sell drugs
+-- Minimum cops are required to sell drugs; leave this as 0 if you set Config.GiveBonusOnPolice to true
 Config.MinimumCops = 0
 
--- Give bonus on selling drugs when no of cops are online
+-- Give a bonus when selling drugs when a certain number of cops are on. Edit these numbers in Framework > server.lua. By default, it's 1.2 prices for more than 0, 1.5 more for more than 3, and 2.0 for more than 7.
 Config.GiveBonusOnPolice = false
 
 -- Allow selling to peds sitting in vehicle
@@ -36,7 +36,7 @@ Config.ChanceSell = 70 -- (in %)
 -- Random sell amount
 Config.RandomSell = { min = 1, max = 6 } -- range: min, max
 
--- Selling timeout so that the menu doesnt stay forever
+-- Selling timeout so that the menu doesn't stay forever
 Config.SellTimeout = 10 -- (secs) Max time you get to choose your option
 
 -- The below option decides whether the person has to toggle selling in a zone (radialmenu/command) (Recommended: false)
