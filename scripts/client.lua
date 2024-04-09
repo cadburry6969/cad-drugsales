@@ -93,7 +93,8 @@ local function initiateSell(ped)
 	if not CurrentZone and not Config.SellAnywhere then return end
 	local items = Framework:GetSellItems(CurrentZone)
 	if not items then return end
-	local randamt = math.random(Config.RandomSell.min, Config.RandomSell.max)
+	local sellAmt = Framework:GetRandomSell(CurrentZone)
+	local randamt = math.random(sellAmt.min, sellAmt.max)
 	local itemCount = #items
 	local hasSold = false
 	for i=1, itemCount, 1 do

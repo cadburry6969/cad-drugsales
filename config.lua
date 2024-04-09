@@ -33,7 +33,7 @@ Config.SellPedOnVehicle = false
 -- Chance to sell drug
 Config.ChanceSell = 70 -- (in %) 
 
--- Random sell amount
+-- Random sell amount if [Config.SellAnywhere == true]
 Config.RandomSell = { min = 1, max = 6 } -- range: min, max
 
 -- Selling timeout so that the menu doesn't stay forever
@@ -78,6 +78,7 @@ Config.SellZones = { -- Sell zones and their drugs
             vec3(60.0, -1699.0, 27.0),
         },
         thickness = 60.0,
+        randomSellAmount = { min = 1, max = 6 },
         items = {
             { item = 'cokebaggy',    price = math.random(100, 200) },
             { item = 'weed_amnesia', price = math.random(100, 200) },
@@ -102,6 +103,7 @@ Config.SellZones = { -- Sell zones and their drugs
             vec3(530.7640991211, -193.10136413574, 97.0)
         },
         thickness = 80.0,
+        randomSellAmount = { min = 1, max = 6 },
         items = {
             { item = 'cokebaggy',    price = math.random(100, 200) },
             { item = 'weed_amnesia', price = math.random(100, 200) },
@@ -180,6 +182,7 @@ Config.SellZones = { -- Sell zones and their drugs
 
         },
         thickness = 60.0,
+        randomSellAmount = { min = 1, max = 6 },
         items = {
             { item = 'cokebaggy',    price = math.random(100, 200) },
             { item = 'weed_amnesia', price = math.random(100, 200) },

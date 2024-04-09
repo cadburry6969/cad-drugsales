@@ -197,4 +197,12 @@ function Framework:GetSellItems(zone)
     end
 end
 
+function Framework:GetRandomSell(zone)
+    if Config.SellAnywhere then
+        return Config.RandomSell
+    else
+        return zone.randomSellAmount
+    end
+end
+
 return Framework
