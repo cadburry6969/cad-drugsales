@@ -95,11 +95,10 @@ local function initiateSell(ped)
 	if not items then return end
 	local sellAmt = Framework:GetRandomSell(CurrentZone)
 	local randamt = math.random(sellAmt.min, sellAmt.max)
-	local itemCount = #items
 	local hasSold = false
-	for i=1, itemCount, 1 do
+	for i=1, #items, 1 do
 		Wait(200) -- don't change this
-		local data = items[math.random(1, #items)]
+		local data = items[i]
 		local amount = Framework:GetItemCount(data.item)
 		local price = data.price
 		if amount and amount > 0 then
