@@ -13,7 +13,11 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(data)
 	price = math.floor(price)
 	local item = tostring(data.item)
 	if Framework:RemoveItem(src, item, data.amt) then
-		Framework:AddMoney(src, "cash", price)
+		if Config.Money.type == 'item' then
+			Framework.AddItem(src, Config.Money.name, price)
+		elseif Config.Money.type == 'money' then
+			Framework:AddMoney(src, Config.Money.name, price)
+		end
 		TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
 		if Config.Debug then print('You got ' .. data.amt .. ' ' .. data.item .. ' for $' .. price) end
 	else

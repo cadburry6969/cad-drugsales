@@ -39,6 +39,12 @@ Config.RandomSell = { min = 1, max = 6 } -- range: min, max
 -- Selling timeout so that the menu doesn't stay forever
 Config.SellTimeout = 10 -- (secs) Max time you get to choose your option
 
+-- What type of money do you want upon sell ?
+Config.Money = {
+    name = 'cash', -- 'cash', 'bank', 'black_money'
+    type = 'money', -- 'item', 'money'
+}
+
 -- The below option decides whether the person has to toggle selling in a zone (radialmenu/command) (Recommended: false)
 Config.ShouldToggleSelling = false
 
