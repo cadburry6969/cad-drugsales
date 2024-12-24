@@ -19,7 +19,8 @@ This resources allows you to sell drugs to npcs in a zone or anywhere.
 
 - ox_lib
 
-# Exports
+# Developer Exports
+> These are required to be placed anywhere unless you know what you are doing
 
 ```lua
 -- toggle target on ped (this will toggle allowing/disallowing target even if inside zone)
