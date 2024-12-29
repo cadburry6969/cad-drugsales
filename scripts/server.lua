@@ -18,8 +18,8 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(data)
 		elseif Config.Money.type == 'money' then
 			Framework:AddMoney(src, Config.Money.name, price)
 		end
-		TriggerClientEvent('cad-drugsales:notify', src, 'You recieved $' .. price)
-		if Config.Debug then print('You got ' .. data.amt .. ' ' .. data.item .. ' for $' .. price) end
+		TriggerClientEvent('cad-drugsales:notify', src, 'You recieved ' .. price .. ' (' .. Config.Money.name .. ')')
+		if Config.Debug then print('You got ' .. data.amt .. ' ' .. data.item .. ' for ' .. price .. ' (' .. Config.Money.name .. ')') end
 	else
 		TriggerClientEvent('cad-drugsales:notify', src, 'You could not sell ' .. data.item .. ' (not enough item)')
 	end

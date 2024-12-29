@@ -7,16 +7,16 @@ Config.Debug = false
 Config.Framework = 'qb' -- 'qb', 'esx'
 
 -- what inventory do you use?
-Config.Inventory = 'qb' -- 'qb', 'ps', 'ox'
+Config.Inventory = 'ox' -- 'qb', 'ps', 'ox'
 
 -- what target do you use?
-Config.Target = 'qb' -- 'qb', 'ox' (false: DrawText3D)
+Config.Target = 'ox' -- 'qb', 'ox' (false: DrawText3D)
 
 -- what radial menu do you use?
-Config.Radial = 'qb' -- 'qb', 'ox'
+Config.Radial = 'ox' -- 'qb', 'ox'
 
 -- what dispatch to use for police alerts?
-Config.Dispatch = 'qb' -- 'qb', 'ps', 'moz', 'cd', 'custom'
+Config.Dispatch = 'custom' -- 'qb', 'ps', 'moz', 'cd', 'custom'
 
 -- what menu you want to use?
 Config.OxMenu = true -- true: Ox Menu, false: Ox Context Menu
@@ -41,8 +41,8 @@ Config.SellTimeout = 10 -- (secs) Max time you get to choose your option
 
 -- What type of money do you want upon sell ?
 Config.Money = {
-    name = 'cash', -- 'cash', 'bank', 'black_money'
-    type = 'money', -- 'item', 'money'
+    name = 'black_money', -- 'cash', 'bank', 'black_money'
+    type = 'item', -- 'item', 'money'
 }
 
 -- The below option decides whether the person has to toggle selling in a zone (radialmenu/command) (Recommended: false)
