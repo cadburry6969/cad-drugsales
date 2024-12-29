@@ -18,6 +18,7 @@ This resources allows you to sell drugs to npcs in a zone or anywhere.
 # Dependencies
 
 - ox_lib
+- ox_inventory / qb-inventory / lj-inventory / ps-inventory
 
 # Developer Exports
 > These are required to be placed anywhere unless you know what you are doing

@@ -10,7 +10,7 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(data)
 	if Config.GiveBonusOnPolice then
 		price = Framework:GetCopBonus(price)
 	end
-	price = math.floor(price)
+	price = lib.math.round(price)
 	local item = tostring(data.item)
 	if Framework:RemoveItem(src, item, data.amt) then
 		if Config.Money.type == 'item' then
