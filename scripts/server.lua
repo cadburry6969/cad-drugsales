@@ -14,7 +14,7 @@ RegisterNetEvent('cad-drugsales:initiatedrug', function(data)
 	local item = tostring(data.item)
 	if Framework:RemoveItem(src, item, data.amt) then
 		if Config.Money.type == 'item' then
-			Framework.AddItem(src, Config.Money.name, price)
+			Framework:AddItem(src, Config.Money.name, price)
 		elseif Config.Money.type == 'money' then
 			Framework:AddMoney(src, Config.Money.name, price)
 		end
