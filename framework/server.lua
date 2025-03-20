@@ -97,7 +97,7 @@ end
 
 if Config.Inventory == 'qb' then
     function Framework:AddItem(source, item, amount)
-        exports['qb-inventory']:AddItem(source, item, amount)
+        return exports['qb-inventory']:AddItem(source, item, amount)
     end
 
     function Framework:RemoveItem(source, item, amount)
@@ -107,11 +107,21 @@ end
 
 if Config.Inventory == 'ps' then
     function Framework:AddItem(source, item, amount)
-        exports['ps-inventory']:AddItem(source, item, amount)
+        return exports['ps-inventory']:AddItem(source, item, amount)
     end
 
     function Framework:RemoveItem(source, item, amount)
         return exports['ps-inventory']:RemoveItem(source, item, amount)
+    end
+end
+
+if Config.Inventory == 'qs' then
+    function Framework:AddItem(source, item, amount)
+        return exports['qs-inventory']:AddItem(source, item, amount)
+    end
+
+    function Framework:RemoveItem(source, item, amount)
+        return exports['qs-inventory']:RemoveItem(source, item, amount)
     end
 end
 

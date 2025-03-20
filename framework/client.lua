@@ -59,6 +59,18 @@ if Config.Inventory == 'ox' then
     end
 end
 
+if Config.Inventory == 'qs' then
+    local items = exports['qs-inventory']:GetItemList()
+
+    function Framework:GetItemLabel(item)
+        return items[item].label or 'Unknown'
+    end
+
+    function Framework:GetItemCount(item)
+		return exports['qs-inventory']:Search(item)
+    end
+end
+
 if Config.Target == 'ox' then
     function Framework:AddGlobalPed(options)
         exports.ox_target:addGlobalPed(options)
