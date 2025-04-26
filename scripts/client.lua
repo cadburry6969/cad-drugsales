@@ -5,6 +5,7 @@ local SoldPeds = {}
 local CurrentZone = nil
 local AllowedTarget = (not Config.ShouldToggleSelling)
 local InitiateSellProgress = false
+local Restricted = false
 
 -- Cut shorts the decimalPlaces to given position or else removes them
 local function round(num, numDecimalPlaces)
@@ -166,7 +167,7 @@ local function isPedBlacklisted(ped)
 end
 
 local function canTarget(entity)
-	if not CurrentZone and not Config.SellAnywhere then return false end
+	if (not CurrentZone and not Config.SellAnywhere) or Restricted then return false end
 	local isVehicle = Config.SellPedOnVehicle or not IsPedInAnyVehicle(entity, false)
 	if not IsPedDeadOrDying(entity, false) and isVehicle and (GetPedType(entity)~=28) and (not IsPedAPlayer(entity)) and (not isPedBlacklisted(entity)) and not IsPedInAnyVehicle(cache.ped, false) then
 		return true
@@ -282,6 +283,19 @@ end
 if Config.SellAnywhere then
 	if not Config.ShouldToggleSelling and Config.Target then
 		createTarget()
+	end
+	for k, v in pairs(Config.RestrictedZones) do
+		lib.zones.poly({
+			points = v.points,
+			thickness = v.thickness or 60.0,
+			debug = Config.Debug,
+			onEnter = function()
+				Restricted = true
+			end,
+			onExit = function()
+				Restricted = false
+			end
+		})
 	end
 else
 for k, v in pairs(Config.SellZones) do

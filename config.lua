@@ -70,6 +70,23 @@ Config.SellItems = {
     { item = 'meth',         price = math.random(100, 200) },
 }
 
+-- Restrict selling in below zones only if [Config.SellAnywhere = true]
+Config.RestrictedZones = {
+    ['grove'] = {
+        points = {
+            vec3(251.0, -1860.0, 27.0),
+            vec3(139.0, -1997.0, 27.0),
+            vec3(132.0, -2025.0, 27.0),
+            vec3(91.0, -2023.0, 27.0),
+            vec3(-151.0, -1788.0, 27.0),
+            vec3(-110.0, -1751.0, 27.0),
+            vec3(42.0, -1688.0, 27.0),
+            vec3(60.0, -1699.0, 27.0),
+        },
+        thickness = 60.0,
+    },
+}
+
 -- SellZones will only if [Config.SellAnywhere = false]
 Config.SellZones = { -- Sell zones and their drugs
     ['groove'] = {
