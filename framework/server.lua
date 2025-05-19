@@ -31,13 +31,15 @@ if Config.Framework == 'qb' then
     function Framework:AddMoney(source, type, amount, reason)
         local player = QBCore.Functions.GetPlayer(source)
         if not player then return false end
-        return player.Functions.AddMoney(type, amount, reason)
-    end
-
-    function Framework:RemoveMoney(source, type, amount, reason)
-        local player = QBCore.Functions.GetPlayer(source)
-        if not player then return false end
-        return player.Functions.RemoveMoney(type, amount, reason)
+        if Config.Money.type == 'item' then
+            if Config.Inventory == 'ox' then
+                return Framework:AddItem(source, type, amount)
+            else
+                return Framework:AddItem(source, type, 1, { worth = amount })
+            end
+        else
+            return player.Functions.AddMoney(type, amount, reason)
+        end
     end
 end
 
@@ -72,16 +74,16 @@ if Config.Framework == 'esx' then
     function Framework:AddMoney(source, type, amount, reason)
         local player = ESX.GetPlayerFromId(source)
         if not player then return false end
-        player.addMoney(amount)
-        return true
-    end
-
-    function Framework:RemoveMoney(source, type, amount, reason)
-        local player = ESX.GetPlayerFromId(source)
-        if not player then return false end
-        if player.getAccount('cash').money < amount then return false end
-        player.removeMoney(amount)
-        return true
+        if Config.Money.type == 'item' then
+            if Config.Inventory == 'ox' then
+                return Framework:AddItem(source, type, amount)
+            else
+                return Framework:AddItem(source, type, 1, { worth = amount })
+            end
+        else
+            player.addMoney(amount)
+            return true
+        end
     end
 end
 
